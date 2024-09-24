@@ -1,10 +1,10 @@
+import 'package:daily_planner_1/model/const.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class Logo extends StatelessWidget{
 
   double size = 125;
-  Color mainCl = const Color(0xFF0060FF);
 
   Logo({super.key});
 
@@ -15,7 +15,7 @@ class Logo extends StatelessWidget{
       height: size,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: mainCl,
+        color: mainColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Center(

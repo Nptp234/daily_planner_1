@@ -20,7 +20,7 @@ class ButtonCustom extends StatelessWidget{
       height: height??60,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color??const Color(0xFF0060FF),
+        color: color??mainColor,
         borderRadius: BorderRadius.circular(10)
       ),
       child: Center(
