@@ -1,9 +1,13 @@
 // ignore: must_be_immutable
+import 'package:daily_planner_1/data/api/user_api.dart';
+import 'package:daily_planner_1/data/model/user.dart';
+import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/eye_icon.dart';
 import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
 
 class SignIn extends StatefulWidget{
   const SignIn({super.key});
@@ -16,6 +20,28 @@ class _SignIn extends State<SignIn>{
 
   TextEditingController emailControl = TextEditingController();
   TextEditingController passwordControl = TextEditingController();
+
+  UserApi userApi = UserApi();
+  final currentUser = CurrentUser();
+
+  Future<void> _handleSignIn(BuildContext context) async {
+    showAlert(context, QuickAlertType.loading, "Authenticating...");
+
+    try {
+      bool isAuth = await userApi.checkUser(emailControl.text, passwordControl.text);
+      Navigator.of(context).pop();
+
+      if (isAuth) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const ListTaskPage()),);
+      } 
+      else {
+        showAlert(context, QuickAlertType.error, "Error email or password!");
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+      showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +73,7 @@ class _SignIn extends State<SignIn>{
 
           //button
           GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>const ListTaskPage()));
-            },
+            onTap: () async{_handleSignIn(context);},
             child: ButtonCustom(text: "Sign In", currentContext: context)
           )
         ],
