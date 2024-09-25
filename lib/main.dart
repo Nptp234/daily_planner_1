@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
           colorScheme: const ColorScheme.light(),
           useMaterial3: true,
         ),
-      home: const WellcomePage()
+      home: WellcomePage()
     );
   }
 }

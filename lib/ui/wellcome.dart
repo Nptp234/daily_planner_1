@@ -1,11 +1,45 @@
+import 'package:daily_planner_1/data/api/user_api.dart';
+import 'package:daily_planner_1/data/model/user.dart';
+import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
+import 'package:daily_planner_1/model/alert.dart';
+import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/logo.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/ui/auth/sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
 
 class WellcomePage extends StatelessWidget{
-  const WellcomePage({super.key});
+  WellcomePage({super.key});
+
+  UserApi userApi = UserApi();
+  final currentUser = CurrentUser();
+  final userSqlite = UserSqlite();
+  
+  Future<bool> _checkData(BuildContext context) async{
+    showAlert(context, QuickAlertType.loading, "Loading local user data...");
+    try{
+      Map<String, dynamic> lst = await userSqlite.getUser();
+      if(lst.isEmpty){
+        //no local user
+        return false;
+      }
+      else{
+        final bool sign = await userApi.checkUser(lst['email'], lst['password']);
+        return sign;
+      }
+    }
+    catch(e){
+      rethrow;
+    }
+  }
+
+  goPage(BuildContext context, Widget widget){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => widget));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +64,10 @@ class WellcomePage extends StatelessWidget{
 
           // Button
           GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignIn()));
+            onTap: () async{
+              bool isCheck = await _checkData(context);
+              if(isCheck){goPage(context, BottomMenu());}
+              else{goPage(context, SignIn());}
             },
             child: SizedBox(
               height: getMainHeight(context)/3,

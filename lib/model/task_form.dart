@@ -270,13 +270,21 @@ class _TaskFormPage extends State<TaskFormPage>{
         }
       },
       child: Container(
-        height: 70,
+        width: getMainWidth(context)/2.5,
+        // height: 70,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(10)
         ),
-        child: Center(child: Text("$title: ${times!.format(context)}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),),)
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 17),),
+            Text(times!.format(context), style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),),
+          ],
+        )
       ),
     );
   }
