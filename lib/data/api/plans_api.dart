@@ -43,27 +43,8 @@ class PlansApi{
     }
   }
 
-  Future<bool> addTask(Task task) async{
+  Future<bool> addTask(Task task, Map<String, dynamic> body) async{
     try{
-      final body = {
-         "records":[
-                {
-                    "fields":{
-                        "Title": task.title,
-                        "DateCreated": task.dateCreated,
-                        "Location": task.location,
-                        "Content": task.content,
-                        "StartTime": task.startTime,
-                        "EndTime": task.endTime,
-                        "Method": task.endTime,
-                        "Host": task.host,
-                        "Notes": task.note,
-                        "UserCreated": currentUser.username,
-                    }
-                }
-            ]
-      };
-
       final res = await http.post(
         Uri.parse(baseUrl!),
         headers: {

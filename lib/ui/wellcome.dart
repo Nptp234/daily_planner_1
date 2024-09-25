@@ -31,7 +31,7 @@ class WellcomePage extends StatelessWidget{
           // Button
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>SignIn()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignIn()));
             },
             child: SizedBox(
               height: getMainHeight(context)/3,

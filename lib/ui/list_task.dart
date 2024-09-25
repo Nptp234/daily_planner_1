@@ -15,6 +15,7 @@ class ListTaskPage extends StatefulWidget{
 class _ListTaskPage extends State<ListTaskPage>{
   
   PlansApi plansApi = PlansApi();
+  final listTask = ListTask();
 
   Future<List<Task>> getList() async{
     try{
@@ -29,7 +30,7 @@ class _ListTaskPage extends State<ListTaskPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(context),
+      body: SafeArea(child: _body(context)),
       floatingActionButton: _addButton(context)
     );
   }
@@ -85,6 +86,8 @@ class _ListTaskPage extends State<ListTaskPage>{
               return const Center(child: Text("Null data!"),);
             }
             else{
+              listTask.setTasks(snapshot.data!);
+
               return Container(
                 width: getMainWidth(context),
                 height: getMainHeight(context),
@@ -136,7 +139,7 @@ class TaskItem extends StatelessWidget{
               Text(task.content!, style: const TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.normal), maxLines: 2, textAlign: TextAlign.left,),
               // Date
               const SizedBox(height: 20,),
-              Text(task.dateCreated!, style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal), maxLines: 1, textAlign: TextAlign.left,),
+              Text("Date created: ${task.dateCreated!}", style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal), maxLines: 1, textAlign: TextAlign.left,),
             ],
           ),
           IconButton(

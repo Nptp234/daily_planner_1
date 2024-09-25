@@ -1,11 +1,14 @@
 import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
+import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/model/alert.dart';
+import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AddTask extends StatefulWidget{
@@ -19,6 +22,8 @@ class _AddTask extends State<AddTask>{
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final currentUser = CurrentUser();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController hostController = TextEditingController();
@@ -30,6 +35,8 @@ class _AddTask extends State<AddTask>{
   DateTime now = DateTime.now();
   TimeOfDay startTime = TimeOfDay.now();
   TimeOfDay endTime = TimeOfDay.now();
+
+  DateTime selectDate = DateTime.now();
 
   List<String> methodValue = ["Online", "Offline"];
   String dropdownValue = "Online";
@@ -43,6 +50,18 @@ class _AddTask extends State<AddTask>{
     );
     return picked;
   }
+
+  Future<DateTime?> _selectDay(BuildContext context, DateTime date) async{
+    DateTime _last = DateTime(date.year+5, date.month, date.day);
+
+    final DateTime? picked = await showDatePicker(
+      context: context, 
+      firstDate: date, 
+      lastDate: _last
+    );
+    return picked;
+  }
+
   bool _checkTime(TimeOfDay start, TimeOfDay end){
     if(end.hour<start.hour){return false;}
     else{
@@ -55,11 +74,30 @@ class _AddTask extends State<AddTask>{
     showAlert(context, QuickAlertType.loading, "Loading...");
     
     try{
-      bool isAdd = await plansApi.addTask(task);
+      final body = {
+         "records":[
+                {
+                    "fields":{
+                        "Title": task.title,
+                        "DateCreated": task.dateCreated,
+                        "Location": task.location,
+                        "Content": task.content,
+                        "StartTime": task.startTime,
+                        "EndTime": task.endTime,
+                        "Method": task.endTime,
+                        "Host": task.host,
+                        "Notes": task.note,
+                        "UserCreated": currentUser.username,
+                        "DateStart": task.dateStart
+                    }
+                }
+            ]
+      };
+      bool isAdd = await plansApi.addTask(task, body);
       Navigator.of(context).pop();
 
       if(isAdd){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ListTaskPage()),);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
       }else{
         showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
       }
@@ -113,6 +151,10 @@ class _AddTask extends State<AddTask>{
           _inputField(contentController, const TextStyle(color: Colors.grey, fontSize: 17), "Content", 1, validator: (value)=>_checkNullInput(context, value!),),
           const SizedBox(height: 20,),
 
+          //Date
+          _buttonPickDate(context, "Start Date"),
+          const SizedBox(height: 20,),
+
           //Times
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,7 +195,8 @@ class _AddTask extends State<AddTask>{
                   host: hostController.text,
                   note: noteController.text,
                   title: titleController.text,
-                  location: locationController.text
+                  location: locationController.text,
+                  dateStart: formatDate("$selectDate")
                 );
                 _handleAddTask(task);
               }
@@ -215,31 +258,6 @@ class _AddTask extends State<AddTask>{
   Widget _buttonPickTime(BuildContext context, String title, TimeOfDay? times){
     return GestureDetector(
       onTap: () async{
-        // TimeOfDay? timess = await _selectTime(times);
-        // if(times==startTime){
-        //   startTime = timess!;
-        //   bool checkTime = _checkTime(startTime, endTime);
-        //   if(!checkTime){
-        //     setState(() {
-        //       startTime = timess;
-        //     });
-        //   }
-        //   else{
-        //     startTime = times;
-        //     QuickAlert.show(context: context, type: QuickAlertType.error, text: "Start time must before end time!");
-        //   }
-        // }else{
-        //   endTime = timess!;
-        //   bool checkTime = _checkTime(startTime, endTime);
-        //   if(checkTime){
-        //     setState(() {
-        //       endTime = timess;
-        //     });
-        //   }else{
-        //     endTime = times;
-        //     QuickAlert.show(context: context, type: QuickAlertType.error, text: "End time must after start time!");
-        //   }
-        // }
         TimeOfDay? pickedTime = await _selectTime(times);
         if (pickedTime != null) {
           setState(() {
@@ -269,6 +287,33 @@ class _AddTask extends State<AddTask>{
           borderRadius: BorderRadius.circular(10)
         ),
         child: Center(child: Text("$title: ${times!.format(context)}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),),)
+      ),
+    );
+  }
+
+  Widget _buttonPickDate(BuildContext context ,String title){
+    return GestureDetector(
+      onTap: () async{
+        DateTime? datePick = await _selectDay(context, selectDate);
+        if(datePick!=null){
+          if(datePick.isBefore(DateTime.now())){
+            showAlert(context, QuickAlertType.error, "Begin day can't be before now!");
+          }else{
+            setState(() {
+              selectDate=datePick;
+            });
+          }
+        }
+      },
+      child: Container(
+        width: getMainWidth(context),
+        height: 70,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(10)
+        ),
+        child: Center(child: Text("$title: ${formatDate("$selectDate")}", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),),)
       ),
     );
   }

@@ -2,6 +2,7 @@
 import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/model/alert.dart';
+import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/eye_icon.dart';
 import 'package:daily_planner_1/model/main_button.dart';
@@ -32,7 +33,7 @@ class _SignIn extends State<SignIn>{
       Navigator.of(context).pop();
 
       if (isAuth) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ListTaskPage()),);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
       } 
       else {
         showAlert(context, QuickAlertType.error, "Error email or password!");
