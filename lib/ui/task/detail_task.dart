@@ -4,22 +4,20 @@ import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
-import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/model/task_form.dart';
-import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:quickalert/quickalert.dart';
+import 'package:quickalert/models/quickalert_type.dart';
 
-class AddTask extends StatefulWidget{
-  const AddTask({super.key});
+class DetailTaskPage extends StatefulWidget{
+  DetailTaskPage({super.key, required this.task});
+  Task task;
 
   @override
-  State<AddTask> createState() => _AddTask();
+  State<DetailTaskPage> createState() => _DetailTaskPage();
 }
 
-class _AddTask extends State<AddTask>{
+class _DetailTaskPage extends State<DetailTaskPage>{
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -66,16 +64,35 @@ class _AddTask extends State<AddTask>{
     });
   }
 
-  Future<void> _handleAddTask(BuildContext context) async{
+  Task setNewTask(){
+    Task task = Task(
+          id: widget.task.id,
+          title: titleController.text,
+          dateCreated: widget.task.dateCreated,
+          location: locationController.text,
+          startTime: startTime.format(context),
+          endTime: endTime.format(context),
+          method: dropdownValue,
+          host: hostController.text,
+          note: noteController.text,
+          dateStart: formatDate("$selectDate"),
+          content: contentController.text
+    );
+    return task;
+  }
+
+  Future<void> _handleUpdateTask(BuildContext context) async{
     showAlert(context, QuickAlertType.loading, "Loading...");
     
     try{
+      String recordId = await plansApi.getRecordId(widget.task.id!);
       final body = {
          "records":[
                 {
+                    "id": recordId,
                     "fields":{
                         "Title": titleController.text,
-                        "DateCreated": formatDateTime("$now"),
+                        "DateCreated": widget.task.dateCreated,
                         "Location": locationController.text,
                         "Content": contentController.text,
                         "StartTime": startTime.format(context),
@@ -89,11 +106,12 @@ class _AddTask extends State<AddTask>{
                 }
             ]
       };
-      bool isAdd = await plansApi.addTask(body);
+      bool isUpdate = await plansApi.updateTask(body);
       Navigator.of(context).pop();
 
-      if(isAdd){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
+      if(isUpdate){
+        Task task = setNewTask();
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DetailTaskPage(task: task)));
       }else{
         showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
       }
@@ -102,6 +120,20 @@ class _AddTask extends State<AddTask>{
       Navigator.of(context).pop();
       showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
     }
+  }
+
+  @override
+  void initState() {
+    titleController.text = widget.task.title!;
+    locationController.text = widget.task.location!;
+    hostController.text = widget.task.host!;
+    noteController.text = widget.task.note??"";
+    contentController.text = widget.task.content!;
+    selectDate = DateFormat('dd/MM/yyyy').parse(widget.task.dateStart!);
+    dropdownValue = widget.task.method!;
+    startTime = parseTimeOfDay(widget.task.startTime!);
+    endTime = parseTimeOfDay(widget.task.endTime!);
+    super.initState();
   }
 
   @override
@@ -131,9 +163,8 @@ class _AddTask extends State<AddTask>{
         startTime: startTime,
         endTime: endTime,
         dateStart: selectDate,
-        dateCreated: now,
-        type: "Add Task",
-         
+        dateCreated: DateFormat('dd/MM/yyyy HH:mm').parse(widget.task.dateCreated!),
+        type: "Update Task", 
         formKey: _formKey,
         onDateSelected: _onDatePick,
         onDropdownPicked: _onDropdownPick,
@@ -141,10 +172,11 @@ class _AddTask extends State<AddTask>{
         onStartTimeSelected: _onStartTimeSelected,
         onTapAction: (){
           if(_formKey.currentState?.validate()??false){
-            _handleAddTask(context);
+            _handleUpdateTask(context);
           }
         }
       )
     ); 
   }
+
 }

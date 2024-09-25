@@ -11,6 +11,27 @@ class PlansApi{
 
   final currentUser = CurrentUser();
 
+  Future<String> getRecordId(String id) async{
+    try{
+      final res = await http.get(
+        Uri.parse('$baseUrl?filterByFormula={ID}="$id"'),
+        headers: {
+          'Authorization': 'Bearer $key',
+          'Content-Type': 'application/json'
+        },
+      );
+      if(res.statusCode==200){
+        final data = jsonDecode(res.body);
+        if(data['records'].isNotEmpty){
+          return data['records'][0]['id'];
+        }else{return '';}
+      }else {return '';}
+    }
+    catch(e){
+      return '$e';
+    }
+  }
+
   Future<Map<dynamic, dynamic>> _fetchData() async{
     try{
       final res = await http.get(Uri.parse(baseUrl!), headers: {'Authorization':'Bearer $key'});
@@ -43,9 +64,27 @@ class PlansApi{
     }
   }
 
-  Future<bool> addTask(Task task, Map<String, dynamic> body) async{
+  Future<bool> addTask(Map<String, dynamic> body) async{
     try{
       final res = await http.post(
+        Uri.parse(baseUrl!),
+        headers: {
+          'Authorization':'Bearer $key',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode(body)
+      );
+      if(res.statusCode==200){return true;}
+      else{return false;}
+    }
+    catch(e){
+      rethrow;
+    }
+  }
+
+  Future<bool> updateTask(Map<String, dynamic> body) async{
+    try{
+      final res = await http.put(
         Uri.parse(baseUrl!),
         headers: {
           'Authorization':'Bearer $key',

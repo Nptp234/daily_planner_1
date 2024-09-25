@@ -1,5 +1,6 @@
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
 
 customBottomSheet(BuildContext context, Task task){
@@ -19,7 +20,7 @@ customBottomSheet(BuildContext context, Task task){
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _customListTitle(context, Icons.edit, "Update your plan", (){}),
+              _customListTitle(context, Icons.edit, "Update your plan", (){Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailTaskPage(task: task)));}),
               _customListTitle(context, Icons.delete, "Delete your plan", (){}),
             ],
           ),

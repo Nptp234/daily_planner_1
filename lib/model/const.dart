@@ -11,3 +11,8 @@ Color mainColor = const Color(0xFF0060FF);
 
 String formatDateTime(String date) => DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(date));
 String formatDate(String date) => DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
+
+TimeOfDay parseTimeOfDay(String timeString) {
+  final DateFormat timeFormat = DateFormat.jm();
+  return TimeOfDay.fromDateTime(DateFormat("HH:mm").parse(timeString.trim()));
+}

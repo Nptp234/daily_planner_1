@@ -3,6 +3,7 @@ import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/menu_bottom_sheet.dart';
 import 'package:daily_planner_1/ui/task/add_task.dart';
+import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
 
 class ListTaskPage extends StatefulWidget{
@@ -123,24 +124,29 @@ class TaskItem extends StatelessWidget{
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: Colors.grey[200]
+        color: Colors.grey[100]
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Text(task.title!, style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold), maxLines: 1, textAlign: TextAlign.left,),
-              // Content
-              Text(task.content!, style: const TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.normal), maxLines: 2, textAlign: TextAlign.left,),
-              // Date
-              const SizedBox(height: 20,),
-              Text("Date created: ${task.dateCreated!}", style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal), maxLines: 1, textAlign: TextAlign.left,),
-            ],
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailTaskPage(task: task)));
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(task.title!, style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold), maxLines: 1, textAlign: TextAlign.left,),
+                // Content
+                Text(task.content!, style: const TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.normal), maxLines: 2, textAlign: TextAlign.left,),
+                // Date
+                const SizedBox(height: 20,),
+                Text("Date created: ${task.dateCreated!}", style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal), maxLines: 1, textAlign: TextAlign.left,),
+              ],
+            ),
           ),
           IconButton(
             onPressed: (){
