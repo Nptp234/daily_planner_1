@@ -12,8 +12,15 @@ class StatisticProvider with ChangeNotifier{
   }
 
   void setList(List<TaskStatisticModel> lst){
+    _lst=[];
     _lst = lst;
+    // Delay notifying listeners until after the current frame has finished building
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
+
+  // void notifyChange(){notifyListeners();}
 
   List<TaskStatisticModel> getList()=>_lst;
 }

@@ -2,6 +2,7 @@
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/ui/calendar_view.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
+import 'package:daily_planner_1/ui/notification/notification_view.dart';
 import 'package:daily_planner_1/ui/setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar/MotionTabBar.dart';
@@ -38,6 +39,18 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: (){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const NotificationViewPage()));
+            }, 
+            icon: const Icon(Icons.notifications, size: 30, color: Colors.black,)
+          )
+        ],
+      ),
       body: IndexedStack(
         index: _motionTabBarController!.index,
         children: const [

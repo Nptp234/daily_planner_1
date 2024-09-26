@@ -32,5 +32,6 @@ void setValueList(List<Task> lst){
 double calculatePercentage(String state) {
   double total = _values.values.reduce((a, b) => a + b);
   if (total == 0) return 0; 
-  return ((_values[state] ?? 0) / total) * 100;
+  double percent = ((_values[state] ?? 0) / total) * 100;
+  return double.parse(percent.toStringAsFixed(2));
 }

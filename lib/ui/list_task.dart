@@ -19,16 +19,22 @@ class ListTaskPage extends StatefulWidget{
   State<ListTaskPage> createState() => _ListTaskPage();
 }
 
-class _ListTaskPage extends State<ListTaskPage>{
+class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMixin {
+
+  late TabController tabController;
   
   PlansApi plansApi = PlansApi();
   final listTask = ListTask();
+
+  bool isLoad = false;
+
+  int indexTab = 0;
 
   Future<List<Task>> getList() async{
     try{
       List<Task> lst = await plansApi.getList();
       listTask.setTasks(lst);
-      return lst;
+      return listTask.tasks;
     }
     catch(e){
       rethrow;
@@ -53,6 +59,18 @@ class _ListTaskPage extends State<ListTaskPage>{
       lst.add(setTaskStatistic(colorState(state), value, "$value%", state));
     }
     provider.setList(lst);
+  }
+
+  @override
+  void initState() {
+    tabController = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -93,67 +111,77 @@ class _ListTaskPage extends State<ListTaskPage>{
   }
 
   Widget _body(BuildContext context){
-    return Container(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 0,
+          child: TabBar(
+            controller: tabController,
+            labelColor: Colors.black,
+            indicatorColor: Colors.black,
+            onTap: (index) {
+              tabController.index = index;
+            },
+            tabs: const [
+              Tab(text: "Task List"),
+              Tab(text: "Task Statistic"),
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                _taskListTab(),
+                _taskStatisticTab(),
+              ]
+            ),
+          )
+        )
+      ],
+    );
+  }
+
+  Widget _taskStatisticTab(){
+    return SizedBox(
       width: getMainWidth(context),
       height: getMainHeight(context),
-      padding: const EdgeInsets.all(10),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        physics: const ScrollPhysics(),
-        child: SizedBox(
-          height: getMainHeight(context),
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: getMainWidth(context),
-                    child: const Text("Task Statistic", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
-                  ),
-                  FutureBuilder(
-                    future: getList(), 
-                    builder: (context, snapshot){
-                      if(snapshot.connectionState==ConnectionState.waiting){
-                        return const Center(child: CircularProgressIndicator(),);
-                      }
-                      else if(snapshot.hasError){
-                        return Center(child: Text("${snapshot.error}"),);
-                      }
-                      else if(!snapshot.hasData){
-                        return const Center(child: Text("Null data!"),);
-                      }
-                      else{
-                        return const TaskStatistic();
-                      }
-                    }
-                  ),
-                ],
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: getMainWidth(context),
+            child: const Text("Task Statistic", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
+          ),
+          const TaskStatistic()
+        ],
+      ),
+    );
+  }
+
+  Widget _taskListTab(){
+    return SizedBox(
+      width: getMainWidth(context),
+      height: getMainHeight(context),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 0,
+            child: SizedBox(
+              width: getMainWidth(context),
+              child: const Text("Tasks", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
             ),
-            
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 0,
-                    child: SizedBox(
-                      width: getMainWidth(context),
-                      child: const Text("Tasks", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
-                    ),
-                  ),
-                  Expanded(flex: 1, child: _listTask())
-                ],
-              )
-            )
-          ],
-        ),
-        )
+          ),
+          Expanded(flex: 1, child: _listTask())
+        ],
       ),
     );
   }
