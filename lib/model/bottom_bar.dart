@@ -1,5 +1,6 @@
 
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/ui/calendar_view.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:daily_planner_1/ui/notification/notification_view.dart';
@@ -19,6 +20,7 @@ class BottomMenu extends StatefulWidget{
 class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
   
   MotionTabBarController? _motionTabBarController;
+  final notificationCenter = NotificationCenter();
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
       length: 3, 
       vsync: this,
     );
+    notificationCenter.startTime();
   }
 
   @override
@@ -45,7 +48,7 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
         actions: [
           IconButton(
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const NotificationViewPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationViewPage()));
             }, 
             icon: const Icon(Icons.notifications, size: 30, color: Colors.black,)
           )

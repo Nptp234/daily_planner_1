@@ -100,11 +100,31 @@ class _TaskFormPage extends State<TaskFormPage>{
     widget.onDateSelected(date);
   }
 
-  bool _checkTime(TimeOfDay start, TimeOfDay end){
-    if(end.hour<start.hour){return false;}
-    else{
-      if(end.minute<start.minute){return false;}
-      else{return true;}
+  bool _checkTime(BuildContext context, TimeOfDay start, TimeOfDay end){
+    List<String> endString = end.format(context).split(" ");
+    List<String> startString = start.format(context).split(" ");
+
+    String endJm = endString[1].trim();
+    String startJm = startString[1].trim();
+    
+    String endTime = endString[0].trim();
+    String startTime = startString[0].trim();
+    String endHour = endTime.split(":")[0].trim();
+    String endMinute = endTime.split(":")[1].trim();
+    String startHour = startTime.split(":")[0].trim();
+    String startMinute = startTime.split(":")[1].trim();
+
+    if(endJm==startJm){
+      if(int.parse(endHour)<int.parse(startHour)){return false;}
+      else if(int.parse(endHour)==int.parse(startHour)){
+        if(int.parse(endMinute)<int.parse(startMinute)){return false;}
+        else{return true;}
+      }
+      else{
+        return true;
+      }
+    }else{
+      return endJm=="PM";
     }
   }
 
@@ -251,7 +271,7 @@ class _TaskFormPage extends State<TaskFormPage>{
           setState(() {
             if (title == "Start Time") {
               // Check if the picked start time is before end time
-              if (_checkTime(pickedTime, endTime)) {
+              if (_checkTime(context, pickedTime, endTime)) {
                 _updateStartTime(pickedTime);
                 startTime = pickedTime;
               } else {
@@ -259,7 +279,7 @@ class _TaskFormPage extends State<TaskFormPage>{
               }
             } else if (title == "End Time") {
               // Check if the picked end time is after start time
-              if (_checkTime(startTime, pickedTime)) {
+              if (_checkTime(context, startTime, pickedTime)) {
                 _updateEndTime(pickedTime);
                 endTime = pickedTime;
               } else {

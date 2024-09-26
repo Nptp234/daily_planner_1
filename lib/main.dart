@@ -4,41 +4,17 @@ import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/wellcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-Future<void> showNotification(String title, String description) async{
-  try{
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails("planner1", "Planner Daily", importance: Importance.high, priority: Priority.high, showWhen: true);
-    NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-      0, 
-      title, 
-      description, 
-      notificationDetails
-    );
-  }
-  catch(e){
-    rethrow;
-  }
-  }
-
-void callbackDispatcher(){
-  Workmanager().executeTask(
-    (t, inputData) async{
-      
-      await showNotification("Test", "Testing");
-      return Future.value(true);
-    }
-  );
-}
+final notificationCenter = NotificationCenter();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
   await dotenv.load(fileName: "assets/.env");
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);  // Set false in production
+  await notificationCenter.initializeNotifications();
   runApp(const MainApp());
 }
 
