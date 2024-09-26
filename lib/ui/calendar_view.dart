@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -69,15 +70,14 @@ class _CalendarViewPage extends State<CalendarViewPage>{
   Widget _body(BuildContext context){
     return Container(
       width: getMainWidth(context),
-      // height: getMainHeight(context),
+      height: getMainHeight(context),
       padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _tableCalendar(),
-          const SizedBox(height: 20,),
-          _listTaskForDate(),
+          _listTaskForDate()
         ],
       ),
     );
@@ -128,14 +128,14 @@ class _CalendarViewPage extends State<CalendarViewPage>{
     return taskForDate.isNotEmpty?
     Container(
       width: getMainWidth(context),
-      height: getMainHeight(context)/4,
+      height: getMainHeight(context)/2.25,
       padding: const EdgeInsets.all(10),
       child: ListView.builder(
         itemCount: taskForDate.length,
         scrollDirection: Axis.vertical,
         physics: const ScrollPhysics(),
         itemBuilder: (context, index){
-          return TaskItem(task: taskForDate[index]);
+          return TaskItem(task: taskForDate[index], colorState: colorState(taskForDate[index].state!),);
         },
       ),
     ):

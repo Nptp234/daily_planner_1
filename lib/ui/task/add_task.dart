@@ -84,7 +84,8 @@ class _AddTask extends State<AddTask>{
                         "Host": hostController.text,
                         "Notes": noteController.text,
                         "UserCreated": currentUser.username,
-                        "DateStart": formatDate("$selectDate")
+                        "DateStart": formatDate("$selectDate"),
+                        "Status": "Created"
                     }
                 }
             ]
@@ -133,7 +134,7 @@ class _AddTask extends State<AddTask>{
         dateStart: selectDate,
         dateCreated: now,
         type: "Add Task",
-         
+
         formKey: _formKey,
         onDateSelected: _onDatePick,
         onDropdownPicked: _onDropdownPick,

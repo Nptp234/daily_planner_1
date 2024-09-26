@@ -1,10 +1,16 @@
 import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
+import 'package:daily_planner_1/data/model/task_statistic.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/menu_bottom_sheet.dart';
+import 'package:daily_planner_1/model/statistic_color.dart';
+import 'package:daily_planner_1/model/task_statistic.dart';
+import 'package:daily_planner_1/model/value_statistic.dart';
+import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/task/add_task.dart';
 import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ListTaskPage extends StatefulWidget{
   const ListTaskPage({super.key});
@@ -21,11 +27,32 @@ class _ListTaskPage extends State<ListTaskPage>{
   Future<List<Task>> getList() async{
     try{
       List<Task> lst = await plansApi.getList();
+      listTask.setTasks(lst);
       return lst;
     }
     catch(e){
       rethrow;
     }
+  }
+
+  TaskStatisticModel setTaskStatistic(Color color, double value, String title, String taskState){
+    return TaskStatisticModel(color: color, value: value, title: title, taskState: taskState);
+  }
+
+  void setStatisticList(StatisticProvider provider){
+    List<TaskStatisticModel> lst = [];
+    setValueList(listTask.tasks);
+    
+    Set<String> uniqueStates = <String>{};
+    for (var task in listTask.tasks) {
+      uniqueStates.add(task.state!);
+    }
+
+    for(var state in uniqueStates){
+      double value = calculatePercentage(state);
+      lst.add(setTaskStatistic(colorState(state), value, "$value%", state));
+    }
+    provider.setList(lst);
   }
 
   @override
@@ -74,7 +101,65 @@ class _ListTaskPage extends State<ListTaskPage>{
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         physics: const ScrollPhysics(),
-        child: FutureBuilder<List<Task>>(
+        child: SizedBox(
+          height: getMainHeight(context),
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: getMainWidth(context),
+                    child: const Text("Task Statistic", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
+                  ),
+                  FutureBuilder(
+                    future: getList(), 
+                    builder: (context, snapshot){
+                      if(snapshot.connectionState==ConnectionState.waiting){
+                        return const Center(child: CircularProgressIndicator(),);
+                      }
+                      else if(snapshot.hasError){
+                        return Center(child: Text("${snapshot.error}"),);
+                      }
+                      else if(!snapshot.hasData){
+                        return const Center(child: Text("Null data!"),);
+                      }
+                      else{
+                        return const TaskStatistic();
+                      }
+                    }
+                  ),
+                ],
+              ),
+            ),
+            
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 0,
+                    child: SizedBox(
+                      width: getMainWidth(context),
+                      child: const Text("Tasks", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
+                    ),
+                  ),
+                  Expanded(flex: 1, child: _listTask())
+                ],
+              )
+            )
+          ],
+        ),
+        )
+      ),
+    );
+  }
+
+  Widget _listTask(){
+    return FutureBuilder<List<Task>>(
           future: getList(),
           builder: (context, snapshot){
             if(snapshot.connectionState==ConnectionState.waiting){
@@ -87,33 +172,30 @@ class _ListTaskPage extends State<ListTaskPage>{
               return const Center(child: Text("Null data!"),);
             }
             else{
-              listTask.setTasks(snapshot.data!);
-
-              return Container(
-                width: getMainWidth(context),
-                height: getMainHeight(context),
-                padding: const EdgeInsets.only(bottom: 20),
-                child: ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  scrollDirection: Axis.vertical,
-                  physics: const ScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return TaskItem(task: snapshot.data![index]);
-                  },
-                ),
+              return Consumer<StatisticProvider>(
+                builder: (BuildContext context, StatisticProvider value, Widget? child) { 
+                  setStatisticList(value);
+                  return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      scrollDirection: Axis.vertical,
+                      physics: const ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return TaskItem(task: snapshot.data![index], colorState: colorState(snapshot.data![index].state!),);
+                      },
+                    );
+                },
               );
             }
           }
-        )
-      ),
-    );
+        );
   }
 }
 
 class TaskItem extends StatelessWidget{
 
-  TaskItem({super.key, required this.task});
+  TaskItem({super.key, required this.task, required this.colorState});
   Task task;
+  Color colorState;
 
   @override
   Widget build(BuildContext context) {
@@ -145,6 +227,9 @@ class TaskItem extends StatelessWidget{
                 // Date
                 const SizedBox(height: 20,),
                 Text("Date created: ${task.dateCreated!}", style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.normal), maxLines: 1, textAlign: TextAlign.left,),
+                // State
+                const SizedBox(height: 10,),
+                Text(task.state!, style: TextStyle(fontSize: 15, color: colorState, fontWeight: FontWeight.bold), maxLines: 1, textAlign: TextAlign.left,),
               ],
             ),
           ),

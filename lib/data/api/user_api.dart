@@ -25,19 +25,40 @@ class UserApi{
     }
   }
 
+  // Future<bool> checkUser(String email, String pass) async{
+  //   try{
+  //     final data = await _fetchDataUser();
+  //     var records = data['records'];
+  //     for(var record in records){
+  //       var field = record['fields'];
+  //       User user = User.fromJson(field);
+  //       if(user.email==email&&user.pass==pass){
+  //         currentUser.setCurrent(user);
+  //         return true;
+  //       }
+  //     }
+  //     return false;
+  //   }
+  //   catch(e){
+  //     rethrow;
+  //   }
+  // }
+
   Future<bool> checkUser(String email, String pass) async{
     try{
-      final data = await _fetchDataUser();
-      var records = data['records'];
-      for(var record in records){
-        var field = record['fields'];
-        User user = User.fromJson(field);
-        if(user.email==email&&user.pass==pass){
-          currentUser.setCurrent(user);
-          return true;
+      final res = await http.get(
+        Uri.parse('$baseUrl?filterByFormula=AND({Email}="$email", {Pass}="$pass")'),
+        headers: {"Authorization": "Bearer $key"}
+      );
+      if(res.statusCode==200){
+        var body = jsonDecode(res.body);
+        var records = body["records"];
+        if(records.isNotEmpty){
+          var field = records[0]["fields"];
+          currentUser.setCurrent(User(username: field["Username"], email: field["Email"], pass: field["Pass"]));
         }
-      }
-      return false;
+        return records.isNotEmpty;
+      }else{return false;}
     }
     catch(e){
       rethrow;
