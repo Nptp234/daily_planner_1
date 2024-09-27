@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:daily_planner_1/data/api/plans_api.dart';
+import 'package:daily_planner_1/data/model/notification.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +26,7 @@ class NotificationCenter{
   List<Task> _tasks = [];
   DateTime dateNow = DateTime.now();
   PlansApi plansApi = PlansApi();
+  late NotificationProvider notificationProvider;
 
   final tz.TZDateTime now = tz.TZDateTime.now(tz.getLocation('Asia/Ho_Chi_Minh'));
 
@@ -52,6 +55,12 @@ class NotificationCenter{
     _tasks = ListTask().tasks;
   }
 
+  void addListNotifyProvider(Task task){
+    String title = "You have a task incomming!";
+    String description = "Task ${task.title!} will begin at ${task.startTime!}, and will end at ${task.endTime!}";
+    if(!task.isNotified){notificationProvider.addList(NotificationModel(id: 0, title: title, description: description, task: task));}
+  }
+
   TimeOfDay dateTimeToTimeOfDay(DateTime dateTime) {
     return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
   }
@@ -69,7 +78,7 @@ class NotificationCenter{
       DateTime taskDate = format.parse(task.dateStart!);
       TimeOfDay startTime = parseTimeOfDay(task.startTime!);
 
-      int hour = 1;
+      int hour = DateTime.now().hour;
       if(task.startTime!.split(" ")[1].trim()=="PM"){
         hour = DateTime.now().hour-12;
       }
@@ -91,7 +100,9 @@ class NotificationCenter{
         startTime.hour,
         startTime.minute,
       );
-      if (taskStartDateTime.isAfter(now) && taskStartDateTime.isBefore(nowIn15Minutes)) {
+      if (taskStartDateTime.isAfter(now) && taskStartDateTime.isBefore(nowIn15Minutes) && !task.isNotified) {
+        addListNotifyProvider(task);
+        task.isNotified = true;
         await showNotification("You have a task incomming!", "Task ${task.title!} will begin at ${task.startTime!}, and will end at ${task.endTime!}");
       }
     }

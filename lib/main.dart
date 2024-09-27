@@ -1,5 +1,6 @@
 import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/model/notification_logic.dart';
+import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/wellcome.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,8 @@ class _MainApp extends State<MainApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context)=>StatisticProvider())
+        ChangeNotifierProvider(create: (context)=>StatisticProvider()),
+        ChangeNotifierProvider(create: (context)=>NotificationProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

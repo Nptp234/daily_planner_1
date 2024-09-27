@@ -1,6 +1,7 @@
 
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/notification_logic.dart';
+import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/ui/calendar_view.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:daily_planner_1/ui/notification/notification_view.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:motion_tab_bar/MotionTabBar.dart';
 import 'package:motion_tab_bar/MotionTabBarController.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class BottomMenu extends StatefulWidget{
   const BottomMenu({super.key});
@@ -46,11 +48,29 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationViewPage()));
-            }, 
-            icon: const Icon(Icons.notifications, size: 30, color: Colors.black,)
+          Consumer<NotificationProvider>(
+            builder: (BuildContext context, NotificationProvider value, Widget? child) { 
+              notificationCenter.notificationProvider = value;
+              return SizedBox(
+                width: 50,
+                height: 50,
+                child: Stack(
+                  children: [
+                    IconButton(
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationViewPage()));
+                      }, 
+                      icon: const Icon(Icons.notifications, size: 30, color: Colors.black,)
+                    ),
+                    Positioned(
+                      bottom: 3,
+                      right: 3,
+                      child: Text("${value.getList().length}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),)
+                    )
+                  ],
+                ),
+              );
+            },
           )
         ],
       ),

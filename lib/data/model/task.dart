@@ -2,7 +2,8 @@ import 'dart:collection';
 
 class Task{
   String? id, title, dateCreated, dateStart, content, startTime, endTime, method, location, host, note, state;
-  Task({this.id, this.dateCreated, this.content, this.startTime, this.endTime, this.method, this.host, this.note, this.state, this.title, this.location, this.dateStart});
+  bool isNotified = false;
+  Task({this.id, this.dateCreated, this.content, this.startTime, this.endTime, this.method, this.host, this.note, this.state, this.title, this.location, this.dateStart, this.isNotified = false});
 
   Task.fromJson(Map<dynamic, dynamic> e){
     id = e["ID"];
