@@ -1,4 +1,6 @@
 
+import 'package:daily_planner_1/data/api/plans_api.dart';
+import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
@@ -23,6 +25,15 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
   
   MotionTabBarController? _motionTabBarController;
   final notificationCenter = NotificationCenter();
+
+  Future<void> _refreshData() async {
+    // Simulate refreshing data
+    await Future.delayed(Duration(seconds: 2));
+    List<Task> lst = await PlansApi().getList();
+    setState(() {
+      ListTask().setTasks(lst);
+    });
+  }
 
   @override
   void initState() {
@@ -74,13 +85,16 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
           )
         ],
       ),
-      body: IndexedStack(
-        index: _motionTabBarController!.index,
-        children: const [
-          ListTaskPage(),
-          CalendarViewPage(),
-          SettingViewPage(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: IndexedStack(
+          index: _motionTabBarController!.index,
+          children: const [
+            ListTaskPage(),
+            CalendarViewPage(),
+            SettingViewPage(),
+          ],
+        )
       ),
 
       bottomNavigationBar: MotionTabBar(

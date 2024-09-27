@@ -4,9 +4,11 @@ import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 
 class DetailTaskPage extends StatefulWidget{
@@ -22,6 +24,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final currentUser = CurrentUser();
+  final listTask = ListTask();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController locationController = TextEditingController();
@@ -81,7 +84,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
     return task;
   }
 
-  Future<void> _handleUpdateTask(BuildContext context) async{
+  Future<void> _handleUpdateTask(BuildContext context, String state) async{
     showAlert(context, QuickAlertType.loading, "Loading...");
     
     try{
@@ -101,7 +104,8 @@ class _DetailTaskPage extends State<DetailTaskPage>{
                         "Host": hostController.text,
                         "Notes": noteController.text,
                         "UserCreated": currentUser.username,
-                        "DateStart": formatDate("$selectDate")
+                        "DateStart": formatDate("$selectDate"),
+                        "Status": state
                     }
                 }
             ]
@@ -131,6 +135,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
     contentController.text = widget.task.content!;
     selectDate = DateFormat('dd/MM/yyyy').parse(widget.task.dateStart!);
     dropdownValue = widget.task.method!;
+
     startTime = parseTimeOfDay(widget.task.startTime!);
     endTime = parseTimeOfDay(widget.task.endTime!);
     super.initState();
@@ -139,7 +144,21 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.white,),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [
+          widget.task.state!="Ended" && widget.task.state!="Done"?
+          Row(
+            children: [
+              _buildMarkAsDoingButton(context),
+              const SizedBox(width: 20,),
+              _buildMarkAsDoneButton(context),
+              const SizedBox(width: 20,),
+            ],
+          ):
+          const SizedBox()
+        ],
+      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         physics: const ScrollPhysics(),
@@ -148,35 +167,63 @@ class _DetailTaskPage extends State<DetailTaskPage>{
     );
   }
 
+  Widget _buildMarkAsDoingButton(BuildContext context,) {
+    return GestureDetector(
+            onTap: () => _handleUpdateTask(context, "In Process"),
+            child: Text(
+              "Mark as Doing",
+              style: TextStyle(
+                color: colorState("In Process"),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+  }
+
+  Widget _buildMarkAsDoneButton(BuildContext context) {
+    return  GestureDetector(
+            onTap: () => _handleUpdateTask(context, "Done"),
+            child: Text(
+              "Mark as Done",
+              style: TextStyle(
+                color: colorState("Done"),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+  }
+
   Widget _body(BuildContext context){
     return Container(
-      width: getMainWidth(context),
-      // height: getMainHeight(context),
-      padding: const EdgeInsets.all(15),
-      color: Colors.white,
-      child: TaskFormPage(
-        titleController: titleController, 
-        locationController: locationController, 
-        hostController: hostController, 
-        noteController: noteController, 
-        contentController: contentController, 
-        startTime: startTime,
-        endTime: endTime,
-        dateStart: selectDate,
-        dateCreated: DateFormat('dd/MM/yyyy HH:mm').parse(widget.task.dateCreated!),
-        type: "Update Task", 
-        formKey: _formKey,
-        onDateSelected: _onDatePick,
-        onDropdownPicked: _onDropdownPick,
-        onEndTimeSelected: _onEndTimeSelected,
-        onStartTimeSelected: _onStartTimeSelected,
-        onTapAction: (){
-          if(_formKey.currentState?.validate()??false){
-            _handleUpdateTask(context);
-          }
-        }
-      )
-    ); 
+          width: getMainWidth(context),
+          // height: getMainHeight(context),
+          padding: const EdgeInsets.all(15),
+          color: Colors.white,
+          child: TaskFormPage(
+            titleController: titleController, 
+            locationController: locationController, 
+            hostController: hostController, 
+            noteController: noteController, 
+            contentController: contentController, 
+            startTime: startTime,
+            endTime: endTime,
+            dateStart: selectDate,
+            dateCreated: DateFormat('dd/MM/yyyy HH:mm').parse(widget.task.dateCreated!),
+            type: "Update Task", 
+            formKey: _formKey,
+            onDateSelected: _onDatePick,
+            onDropdownPicked: _onDropdownPick,
+            onEndTimeSelected: _onEndTimeSelected,
+            onStartTimeSelected: _onStartTimeSelected,
+            onTapAction: (){
+              if(_formKey.currentState?.validate()??false){
+                _handleUpdateTask(context, "Created");
+              }
+            }
+          )
+        ); 
   }
 
 }

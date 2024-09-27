@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
+
 class Task{
   String? id, title, dateCreated, dateStart, content, startTime, endTime, method, location, host, note, state;
   bool isNotified = false;
@@ -21,7 +23,7 @@ class Task{
   }
 }
 
-class ListTask{
+class ListTask with ChangeNotifier{
   //singleton
   ListTask._privateContructor();
   static final ListTask _instance = ListTask._privateContructor();
@@ -33,5 +35,7 @@ class ListTask{
   List<Task> _tasks = [];
   UnmodifiableListView<Task> get tasks => UnmodifiableListView(_tasks);
 
-  void setTasks(List<Task> lst){_tasks=lst;}
+  void setTasks(List<Task> lst){
+    _tasks=lst; 
+  }
 }

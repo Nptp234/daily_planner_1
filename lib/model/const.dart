@@ -13,6 +13,6 @@ String formatDateTime(String date) => DateFormat('dd/MM/yyyy HH:mm').format(Date
 String formatDate(String date) => DateFormat('dd/MM/yyyy').format(DateTime.parse(date));
 
 TimeOfDay parseTimeOfDay(String timeString) {
-  final DateFormat timeFormat = DateFormat.jm();
-  return TimeOfDay.fromDateTime(DateFormat("HH:mm").parse(timeString.trim()));
+  // final DateFormat timeFormat = DateFormat.jm();
+  return TimeOfDay.fromDateTime(DateFormat("h:mm a").parse(timeString.trim()));
 }

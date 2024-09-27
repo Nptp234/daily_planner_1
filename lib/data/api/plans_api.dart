@@ -99,4 +99,47 @@ class PlansApi{
       rethrow;
     }
   }
+
+  Future<bool> removeTask(String taskId) async{
+    try{
+      String recordId = await getRecordId(taskId);
+      final res = await http.delete(Uri.parse("$baseUrl/$recordId"), headers: {'Authorization':'Bearer $key'});
+      return res.statusCode==200;
+    }
+    catch(e){
+      rethrow;
+    }
+  }
+
+  Future<bool> updateTaskState(Task task, String state) async{
+    try{  
+      String recordId = await getRecordId(task.id!);
+      final body = {
+         "records":[
+                {
+                    "id": recordId,
+                    "fields":{
+                        "Status": state,
+                        "Title": task.title,
+                        "DateCreated": task.dateCreated,
+                        "Location": task.location,
+                        "Content": task.content,
+                        "StartTime": task.startTime,
+                        "EndTime": task.endTime,
+                        "Method": task.method,
+                        "Host": task.host,
+                        "Notes": task.note??"",
+                        "UserCreated": currentUser.username,
+                        "DateStart": task.dateStart
+                    }
+                }
+            ]
+      };
+      bool isUpdate = await updateTask(body);
+      return isUpdate;
+    }
+    catch(e){
+      rethrow;
+    }
+  }
 }

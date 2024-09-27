@@ -6,7 +6,9 @@ class NotificationProvider with ChangeNotifier{
   List<NotificationModel> _lst = [];
 
   void addList(NotificationModel noti){
-    _lst.add(noti);
+    if(!_lst.contains(noti)){
+      _lst.add(noti);
+    }
     notifyListeners();
   }
 

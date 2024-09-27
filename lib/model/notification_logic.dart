@@ -27,6 +27,7 @@ class NotificationCenter{
   DateTime dateNow = DateTime.now();
   PlansApi plansApi = PlansApi();
   late NotificationProvider notificationProvider;
+  final listTask = ListTask();
 
   final tz.TZDateTime now = tz.TZDateTime.now(tz.getLocation('Asia/Ho_Chi_Minh'));
 
@@ -52,7 +53,7 @@ class NotificationCenter{
 
   void setTasks(){
     _tasks = [];
-    _tasks = ListTask().tasks;
+    _tasks = listTask.tasks;
   }
 
   void addListNotifyProvider(Task task){
@@ -68,10 +69,6 @@ class NotificationCenter{
 
   Future<void> checkTasksAndNotify() async {
     DateFormat format = DateFormat("dd/MM/yyyy");
-
-    if(ListTask().tasks.isEmpty){
-      _tasks = await plansApi.getList();
-    }
 
     for (var task in _tasks) {
       // Check if the task needs a notification

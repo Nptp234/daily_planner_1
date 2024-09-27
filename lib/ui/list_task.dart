@@ -11,6 +11,7 @@ import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/task/add_task.dart';
 import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ListTaskPage extends StatefulWidget{
@@ -34,13 +35,50 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
   Future<List<Task>> getList() async{
     try{
       List<Task> lst = await plansApi.getList();
+      await chechForUpdateStatus(lst);
       listTask.setTasks(lst);
-      NotificationCenter().setTasks();
       return listTask.tasks;
     }
     catch(e){
       rethrow;
     }
+  }
+
+  Future<void> chechForUpdateStatus(List<Task> lst) async{
+    try{ 
+      for(var task in lst){
+        if(checkForEndTime(task.endTime!, task.dateStart!)){
+          if(task.state!="Done"){
+            await plansApi.updateTaskState(task, "Ended");
+          }
+        }
+      }
+      NotificationCenter().setTasks();
+    }
+    catch(e){
+      rethrow;
+    }
+  }
+  
+  Future<void> _refreshData() async {
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {});
+  }
+
+  bool checkForEndTime(String endTime, String dateStart){
+    TimeOfDay now = TimeOfDay.now();
+    DateTime dateNow = DateTime.now();
+    DateFormat format = DateFormat("dd/MM/yyyy");
+    DateTime newDate = format.parse(dateStart);
+
+    // String jm = endTime.split(" ")[1];
+    List<String> times = endTime.split(" ")[0].split(":");
+    TimeOfDay newEnd = parseTimeOfDay(endTime);
+    if(newDate.year<=dateNow.year && newDate.month<=dateNow.month && newDate.day<dateNow.day){
+      return true;
+    }
+    if(newEnd.hour<now.hour){return true;}
+    return newEnd.hour==now.hour && newEnd.minute<now.minute;
   }
 
   TaskStatisticModel setTaskStatistic(Color color, double value, String title, String taskState){
@@ -62,6 +100,7 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
     }
     provider.setList(lst);
   }
+
 
   @override
   void initState() {
@@ -189,7 +228,9 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
   }
 
   Widget _listTask(){
-    return FutureBuilder<List<Task>>(
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      child: FutureBuilder<List<Task>>(
           future: getList(),
           builder: (context, snapshot){
             if(snapshot.connectionState==ConnectionState.waiting){
@@ -217,7 +258,8 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
               );
             }
           }
-        );
+        )
+    );
   }
 }
 
