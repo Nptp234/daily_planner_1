@@ -1,5 +1,4 @@
-import 'package:daily_planner_1/data/api/plans_api.dart';
-import 'package:daily_planner_1/data/model/task.dart';
+
 import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/state/reorder_provider.dart';
@@ -9,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+// import 'package:timezone/timezone.dart' as tz;
 
 final notificationCenter = NotificationCenter();
 

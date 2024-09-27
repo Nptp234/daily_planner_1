@@ -1,6 +1,4 @@
-import 'package:daily_planner_1/data/model/task_statistic.dart';
 import 'package:daily_planner_1/model/const.dart';
-import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';

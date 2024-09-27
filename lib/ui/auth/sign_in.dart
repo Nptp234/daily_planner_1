@@ -5,9 +5,7 @@ import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
 import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
-import 'package:daily_planner_1/model/eye_icon.dart';
 import 'package:daily_planner_1/model/main_button.dart';
-import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 

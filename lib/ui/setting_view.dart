@@ -11,7 +11,7 @@ class SettingViewPage extends StatefulWidget{
 class _SettingViewPage extends State<SettingViewPage>{
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: SettingsList(),
     );
   }

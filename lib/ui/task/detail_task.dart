@@ -2,13 +2,11 @@ import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/model/alert.dart';
-import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 
 class DetailTaskPage extends StatefulWidget{

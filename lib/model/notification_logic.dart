@@ -75,10 +75,10 @@ class NotificationCenter{
       DateTime taskDate = format.parse(task.dateStart!);
       TimeOfDay startTime = parseTimeOfDay(task.startTime!);
 
-      int hour = DateTime.now().hour;
-      if(task.startTime!.split(" ")[1].trim()=="PM"){
-        hour = DateTime.now().hour-12;
-      }
+      // int hour = DateTime.now().hour;
+      // if(task.startTime!.split(" ")[1].trim()=="PM"){
+      //   hour = DateTime.now().hour-12;
+      // }
 
       DateTime now = DateTime(
         DateTime.now().year,

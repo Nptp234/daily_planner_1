@@ -1,13 +1,11 @@
 import 'dart:developer';
 
 import 'package:daily_planner_1/data/model/task.dart';
-import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:quickalert/quickalert.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarViewPage extends StatefulWidget{

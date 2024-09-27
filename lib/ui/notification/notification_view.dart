@@ -1,10 +1,8 @@
 import 'package:daily_planner_1/data/model/notification.dart';
 import 'package:daily_planner_1/model/const.dart';
-import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
 class NotificationViewPage extends StatefulWidget{
