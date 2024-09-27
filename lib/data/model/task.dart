@@ -45,10 +45,9 @@ class ListTask with ChangeNotifier{
   }
   //
 
-  List<Task> _tasks = [];
-  UnmodifiableListView<Task> get tasks => UnmodifiableListView(_tasks);
+  List<Task> tasks = [];
 
   void setTasks(List<Task> lst){
-    _tasks=lst; 
+    tasks=lst; 
   }
 }

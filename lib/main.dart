@@ -2,6 +2,7 @@ import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
+import 'package:daily_planner_1/state/reorder_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/wellcome.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class _MainApp extends State<MainApp> {
       providers: [
         ChangeNotifierProvider(create: (context)=>StatisticProvider()),
         ChangeNotifierProvider(create: (context)=>NotificationProvider()),
+        ChangeNotifierProvider(create: (context)=>ReorderProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

@@ -7,6 +7,7 @@ import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_statistic.dart';
 import 'package:daily_planner_1/model/value_statistic.dart';
+import 'package:daily_planner_1/state/reorder_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/ui/task/add_task.dart';
 import 'package:daily_planner_1/ui/task/detail_task.dart';
@@ -221,11 +222,56 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
               child: const Text("Tasks", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25), textAlign: TextAlign.left,),
             ),
           ),
-          Expanded(flex: 1, child: _listTask())
+          Expanded(flex: 1, child: _reorderableListTask())
         ],
       ),
     );
   }
+
+
+Widget _reorderableListTask() {
+  return FutureBuilder<List<Task>>(
+    future: getList(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text("${snapshot.error}"));
+      } else if (!snapshot.hasData) {
+        return const Center(child: Text("Null data!"));
+      } else {
+        return Consumer<StatisticProvider>(
+          builder: (BuildContext context, StatisticProvider value, Widget? child) {
+            setStatisticList(value);
+            return RefreshIndicator(
+              onRefresh: _refreshData,
+              child: Consumer<ReorderProvider>(
+                builder: (context, value, child) {
+                  value.setTasks(snapshot.data!);
+                  return ReorderableListView.builder(
+                    itemCount: snapshot.data!.length,
+                    scrollDirection: Axis.vertical,
+                    physics: const ScrollPhysics(),
+                    onReorder: (int oldIndex, int newIndex) {
+                      value.reorderTasks(oldIndex, newIndex);
+                    },
+                    itemBuilder: (context, index) {
+                      return TaskItem(
+                        key: ValueKey(snapshot.data![index].id),  //unique key for each item
+                        task: snapshot.data![index],
+                        colorState: colorState(snapshot.data![index].state!),
+                      );
+                    },
+                  );
+                },
+              )
+            );
+          },
+        );
+      }
+    },
+  );
+}
 
   Widget _listTask(){
     return RefreshIndicator(
