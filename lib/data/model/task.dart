@@ -21,6 +21,19 @@ class Task{
     location = e["Location"];
     dateStart = e["DateStart"];
   }
+
+  // For duplicate notification 
+  // Override equality operator to compare notifications by task
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Task) return false;
+    return id == other.id;
+  }
+
+  // Override hashCode for comparison in collections
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class ListTask with ChangeNotifier{

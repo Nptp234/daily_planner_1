@@ -84,7 +84,8 @@ class NotificationCenter{
         DateTime.now().year,
         DateTime.now().month,
         DateTime.now().day,
-        hour,
+        // hour,
+        DateTime.now().hour,
         DateTime.now().minute,
       );
 
