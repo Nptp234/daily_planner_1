@@ -2,6 +2,7 @@ import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/data/model/task_statistic.dart';
 import 'package:daily_planner_1/model/const.dart';
+import 'package:daily_planner_1/model/notification_logic.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/value_statistic.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
@@ -22,6 +23,7 @@ class TaskProvider with ChangeNotifier {
       List<Task> fetchedTasks = await plansApi.getList();
       tasks = fetchedTasks;
       listTask.setTasks(tasks);
+      NotificationCenter().setTasks();
       await updateTaskStates(plansApi);
     } catch (e) {
       rethrow;

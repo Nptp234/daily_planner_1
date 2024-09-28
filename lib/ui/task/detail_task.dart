@@ -174,7 +174,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   Widget _buildMarkAsDoingButton(BuildContext context,) {
     stateTask = "In Process";
     return GestureDetector(
-            onTap: () => _handleUpdateTask(context, stateTask),
+            onTap: () => _handleUpdateTask(context, "In Process"),
             child: Text(
               "Mark as Doing",
               style: TextStyle(
@@ -189,7 +189,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   Widget _buildMarkAsDoneButton(BuildContext context) {
     stateTask = "Done";
     return  GestureDetector(
-            onTap: () => _handleUpdateTask(context, stateTask),
+            onTap: () => _handleUpdateTask(context, "Done"),
             child: Text(
               "Mark as Done",
               style: TextStyle(

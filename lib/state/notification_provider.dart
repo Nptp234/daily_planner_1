@@ -5,11 +5,12 @@ class NotificationProvider with ChangeNotifier{
 
   List<NotificationModel> _lst = [];
 
-  void addList(NotificationModel noti){
-    if(!_lst.contains(noti)){
-      _lst.add(noti);
+  void addList(NotificationModel notify){
+    bool exists = _lst.any((noti) => noti.task == notify.task);
+    if (!exists) {
+      _lst.add(notify);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   List<NotificationModel> getList()=>_lst;

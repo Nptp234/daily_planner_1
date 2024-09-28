@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AddTask extends StatefulWidget{
-  AddTask({super.key, required this.taskProvider});
-
-  TaskProvider taskProvider;
+  AddTask({super.key});
 
   @override
   State<AddTask> createState() => _AddTask();
@@ -92,7 +90,6 @@ class _AddTask extends State<AddTask>{
 
       if(isAdd){
         Navigator.of(context).pop();
-        await widget.taskProvider.fetchTasks(plansApi);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
       }else{
         Navigator.of(context).pop();
