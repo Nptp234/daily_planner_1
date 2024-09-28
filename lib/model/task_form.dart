@@ -24,7 +24,8 @@ class TaskFormPage extends StatefulWidget{
     required this.onStartTimeSelected,
     required this.onEndTimeSelected,
     required this.onDropdownPicked,
-    required this.onDateSelected
+    required this.onDateSelected,
+    this.isReadOnly=false
   });
   TextEditingController titleController, locationController, hostController, noteController, contentController;
   TimeOfDay startTime, endTime;
@@ -32,6 +33,7 @@ class TaskFormPage extends StatefulWidget{
   String type;
   GestureTapCallback onTapAction;
   GlobalKey<FormState> formKey;
+  bool? isReadOnly = false;
 
   static TimeOfDay getStartTime() => _TaskFormPage().startTime;
   static TimeOfDay getEndTime() => _TaskFormPage().endTime;
@@ -241,13 +243,14 @@ class _TaskFormPage extends State<TaskFormPage>{
             icon: const Icon(Icons.arrow_downward_rounded, size: 25, color: Colors.grey,),
             elevation: 16,
             style: const TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.normal),
-            onChanged: (String? currentValue){
+            onChanged: !widget.isReadOnly!?
+            (String? currentValue){
               setState(() {
                 dropdownValue = currentValue!;
                 method = dropdownValue;
                 _updateDropdownValue(currentValue);
               });
-            },
+            }:(String? currentValue){},
             items: methodValue.map<DropdownMenuItem<String>>(
               (String value){
                 return DropdownMenuItem<String>(
@@ -264,8 +267,9 @@ class _TaskFormPage extends State<TaskFormPage>{
 
   Widget _buttonPickTime(BuildContext context, String title, TimeOfDay? times){
     return GestureDetector(
-      onTap: () async{
-        TimeOfDay? pickedTime = await _selectTime(times);
+      onTap: !widget.isReadOnly!?
+      () async{
+        TimeOfDay? pickedTime = await _selectTime(times!);
         
         if (pickedTime != null) {
           setState(() {
@@ -288,7 +292,7 @@ class _TaskFormPage extends State<TaskFormPage>{
             }
           });
         }
-      },
+      }:(){},
       child: Container(
         width: getMainWidth(context)/2.5,
         // height: 70,
@@ -311,7 +315,8 @@ class _TaskFormPage extends State<TaskFormPage>{
 
   Widget _buttonPickDate(BuildContext context ,String title){
     return GestureDetector(
-      onTap: () async{
+      onTap: !widget.isReadOnly!?
+      () async{
         DateTime? datePick = await _selectDay(context, selectDate);
         if(datePick!=null){
           if(datePick.isBefore(DateTime.now())){
@@ -323,7 +328,7 @@ class _TaskFormPage extends State<TaskFormPage>{
             });
           }
         }
-      },
+      }:(){},
       child: Container(
         width: getMainWidth(context),
         height: 70,
@@ -341,6 +346,7 @@ class _TaskFormPage extends State<TaskFormPage>{
     return TextFormField(
       controller: input,
       maxLines: maxLines,
+      readOnly: widget.isReadOnly!,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: hintStyle,

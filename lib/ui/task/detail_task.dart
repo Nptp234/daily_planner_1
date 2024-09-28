@@ -5,6 +5,7 @@ import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_form.dart';
+import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -29,6 +30,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   TextEditingController hostController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+  String stateTask = "Created";
   
   
   DateTime now = DateTime.now();
@@ -109,12 +111,16 @@ class _DetailTaskPage extends State<DetailTaskPage>{
             ]
       };
       bool isUpdate = await plansApi.updateTask(body);
-      Navigator.of(context).pop();
 
       if(isUpdate){
         Task task = setNewTask();
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DetailTaskPage(task: task)));
+        Navigator.of(context).pop();
+        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DetailTaskPage(task: task)));
+        setState(() {
+          widget.task = task;
+        });
       }else{
+        Navigator.of(context).pop();
         showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
       }
     }
@@ -166,12 +172,13 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   }
 
   Widget _buildMarkAsDoingButton(BuildContext context,) {
+    stateTask = "In Process";
     return GestureDetector(
-            onTap: () => _handleUpdateTask(context, "In Process"),
+            onTap: () => _handleUpdateTask(context, stateTask),
             child: Text(
               "Mark as Doing",
               style: TextStyle(
-                color: colorState("In Process"),
+                color: colorState(stateTask),
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -180,12 +187,13 @@ class _DetailTaskPage extends State<DetailTaskPage>{
   }
 
   Widget _buildMarkAsDoneButton(BuildContext context) {
+    stateTask = "Done";
     return  GestureDetector(
-            onTap: () => _handleUpdateTask(context, "Done"),
+            onTap: () => _handleUpdateTask(context, stateTask),
             child: Text(
               "Mark as Done",
               style: TextStyle(
-                color: colorState("Done"),
+                color: colorState(stateTask),
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -205,6 +213,7 @@ class _DetailTaskPage extends State<DetailTaskPage>{
             hostController: hostController, 
             noteController: noteController, 
             contentController: contentController, 
+            isReadOnly: widget.task.state=="Done"||widget.task.state=="Ended",
             startTime: startTime,
             endTime: endTime,
             dateStart: selectDate,
@@ -217,7 +226,9 @@ class _DetailTaskPage extends State<DetailTaskPage>{
             onStartTimeSelected: _onStartTimeSelected,
             onTapAction: (){
               if(_formKey.currentState?.validate()??false){
-                _handleUpdateTask(context, "Created");
+                if(widget.task.state!="Done"&&widget.task.state!="Ended"){
+                  _handleUpdateTask(context, "Created");
+                }
               }
             }
           )

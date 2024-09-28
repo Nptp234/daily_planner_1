@@ -98,7 +98,7 @@ class NotificationCenter{
         startTime.hour,
         startTime.minute,
       );
-      if (taskStartDateTime.isAfter(now) && taskStartDateTime.isBefore(nowIn15Minutes) && !task.isNotified) {
+      if (taskStartDateTime.isAfter(now) && taskStartDateTime.isBefore(nowIn15Minutes) && !task.isNotified && task.state!="Ended" && task.state!="Done") {
         addListNotifyProvider(task);
         task.isNotified = true;
         await showNotification("You have a task incomming!", "Task ${task.title!} will begin at ${task.startTime!}, and will end at ${task.endTime!}");

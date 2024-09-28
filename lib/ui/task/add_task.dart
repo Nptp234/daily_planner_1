@@ -4,11 +4,14 @@ import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/task_form.dart';
+import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AddTask extends StatefulWidget{
-  const AddTask({super.key});
+  AddTask({super.key, required this.taskProvider});
+
+  TaskProvider taskProvider;
 
   @override
   State<AddTask> createState() => _AddTask();
@@ -86,11 +89,13 @@ class _AddTask extends State<AddTask>{
             ]
       };
       bool isAdd = await plansApi.addTask(body);
-      Navigator.of(context).pop();
 
       if(isAdd){
+        Navigator.of(context).pop();
+        await widget.taskProvider.fetchTasks(plansApi);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
       }else{
+        Navigator.of(context).pop();
         showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
       }
     }
