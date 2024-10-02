@@ -67,7 +67,7 @@ class UserApi{
 
   Future<bool> addUser(Map<dynamic, dynamic> body) async{
     try{ 
-      final res = await http.put(Uri.parse(baseUrl!), headers: {"Authorization": "Bearer $key"}, body: jsonEncode(body));
+      final res = await http.post(Uri.parse(baseUrl!), headers: {"Authorization": "Bearer $key", "Content-Type": "application/json"}, body: jsonEncode(body));
       return res.statusCode == 200;
     }
     catch(e){

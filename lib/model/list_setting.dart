@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
+import 'package:daily_planner_1/controller/auth_logic.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +25,7 @@ class _SettingsList extends State<SettingsList> {
             constraints: const BoxConstraints(maxWidth: 400),
             color: Colors.white,
             child: ListView(
-              children: const [
+              children: [
                 _SingleSection(
                   title: "General",
                   children: [
@@ -40,14 +43,16 @@ class _SettingsList extends State<SettingsList> {
                 _SingleSection(
                   title: "Organization",
                   children: [
-                    _CustomListTile(
+                    const _CustomListTile(
                         title: "Help & Feedback",
                         icon: Icons.help_outline_rounded),
-                    _CustomListTile(
+                    const _CustomListTile(
                         title: "About", icon: Icons.info_outline_rounded),
                     _CustomListTile(
                         title: "Sign out", 
-                        icon: Icons.exit_to_app_rounded, ),
+                        icon: Icons.exit_to_app_rounded, action: () {
+                          AuthCenter().handleLogOut(context);
+                        },),
                   ],
                 ),
               ],

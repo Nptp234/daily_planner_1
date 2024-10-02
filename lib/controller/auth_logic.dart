@@ -6,6 +6,7 @@ import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
 import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/state/task_provider.dart';
+import 'package:daily_planner_1/ui/wellcome.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 
@@ -14,6 +15,7 @@ class AuthCenter{
   TaskProvider taskProvider = TaskProvider();
   UserSqlite userSqlite = UserSqlite();
   bool isCheck = false;
+  final currentUser = CurrentUser();
 
   Future<void> _addSqlite(BuildContext context, String email, String pass) async{
     try{
@@ -53,20 +55,27 @@ class AuthCenter{
       Navigator.of(context).pop();
       
       if(!isCheck){
+
         final body = {
           "records":[
                   {
                       "fields":{
-                          "Email": user.email,
-                          "Pass": user.pass,
-                          "Username": user.username
-                      }
+                            "Email": user.email,
+                            "Pass": user.pass,
+                            "Username": user.username
+                        }
                   }
               ]
         };
         bool isAdd = await userApi.addUser(body);
-        if(isAdd){_addSqlite(context, user.email!, user.pass!);}
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
+        if(isAdd){
+          _addSqlite(context, user.email!, user.pass!);
+          currentUser.setCurrent(User(username: user.username, email: user.email, pass: user.pass));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
+        }
+        else{
+          showAlert(context, QuickAlertType.error, "An error occurred when try to connect server. Please try later.");
+        }
       }
       else{
         showAlert(context, QuickAlertType.error, "User already exist!");
@@ -78,4 +87,9 @@ class AuthCenter{
       showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
     }
   } 
+
+  void handleLogOut(BuildContext context){
+    currentUser.setCurrent(User());
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>WellcomePage()), (Route<dynamic> route) => false);
+  }
 }
