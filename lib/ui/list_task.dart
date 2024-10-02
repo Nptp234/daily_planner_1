@@ -3,7 +3,7 @@ import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/data/model/task_statistic.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/menu_bottom_sheet.dart';
-import 'package:daily_planner_1/model/notification_logic.dart';
+import 'package:daily_planner_1/controller/notification_logic.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_statistic.dart';
 import 'package:daily_planner_1/model/value_statistic.dart';
@@ -67,7 +67,7 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
   // }
   int refreshNumber = 9;
   Future<void> _refreshData(BuildContext context) async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     await getList(context);
     setState(() {});
   }

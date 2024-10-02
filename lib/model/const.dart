@@ -16,3 +16,8 @@ TimeOfDay parseTimeOfDay(String timeString) {
   // final DateFormat timeFormat = DateFormat.jm();
   return TimeOfDay.fromDateTime(DateFormat("h:mm a").parse(timeString.trim()));
 }
+
+bool checkSpecialChar(String value){
+  RegExp regExp = RegExp(r'[!@#$%^&*(),.<>?":{}|;]');
+  return regExp.hasMatch(value);
+}

@@ -1,5 +1,5 @@
 
-import 'package:daily_planner_1/model/notification_logic.dart';
+import 'package:daily_planner_1/controller/notification_logic.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/state/reorder_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';

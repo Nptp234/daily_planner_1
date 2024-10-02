@@ -1,4 +1,5 @@
 // ignore: must_be_immutable
+import 'package:daily_planner_1/controller/auth_logic.dart';
 import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
@@ -23,39 +24,8 @@ class _SignIn extends State<SignIn>{
   
   bool isCheck = false;
 
-  UserApi userApi = UserApi();
   final currentUser = CurrentUser();
-  final userSqlite = UserSqlite();
-
-  Future<void> _addSqlite(BuildContext context) async{
-    try{
-      await userSqlite.addUser(emailControl.text, passwordControl.text);
-    }
-    catch(e){
-      Navigator.of(context).pop();
-      showAlert(context, QuickAlertType.error, "An error occurred when check local user. Please try again.");
-    }
-  } 
-
-  Future<void> _handleSignIn(BuildContext context) async {
-    showAlert(context, QuickAlertType.loading, "Authenticating...");
-
-    try {
-      bool isAuth = await userApi.checkUser(emailControl.text, passwordControl.text);
-      Navigator.of(context).pop();
-      
-      if (isAuth) {
-        if(isCheck){_addSqlite(context);}
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
-      } 
-      else {
-        showAlert(context, QuickAlertType.error, "Error email or password!");
-      }
-    } catch (e) {
-      Navigator.of(context).pop();
-      showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
-    }
-  }
+  AuthCenter authCenter = AuthCenter();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +60,7 @@ class _SignIn extends State<SignIn>{
 
           //button
           GestureDetector(
-            onTap: () async{_handleSignIn(context);},
+            onTap: () async{authCenter.handleSignIn(context, emailControl.text, passwordControl.text);},
             child: ButtonCustom(text: "Sign In", currentContext: context)
           )
         ],
@@ -98,10 +68,10 @@ class _SignIn extends State<SignIn>{
     );
   }
 
-  Icon iconNullCheck = Icon(Icons.square_outlined, size: 30, color: Colors.grey,);
+  Icon iconNullCheck = const Icon(Icons.square_outlined, size: 30, color: Colors.grey,);
   Icon iconChecked = Icon(Icons.check_box, size: 30, color: mainColor,);
   Widget _checkBox(){
-    return Container(
+    return SizedBox(
       width: getMainWidth(context),
       // padding: const EdgeInsets.all(10),
       child: Row(
@@ -122,7 +92,7 @@ class _SignIn extends State<SignIn>{
             }, 
             icon: isCheck?iconChecked:iconNullCheck
           ),
-          Text("Remember you next time?", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.normal),)
+          const Text("Remember you next time?", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.normal),)
         ],
       ),
     );

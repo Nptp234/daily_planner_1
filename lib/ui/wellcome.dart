@@ -7,6 +7,7 @@ import 'package:daily_planner_1/model/logo.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/main_button.dart';
 import 'package:daily_planner_1/ui/auth/sign_in.dart';
+import 'package:daily_planner_1/ui/auth/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -37,7 +38,7 @@ class WellcomePage extends StatelessWidget{
 
   goPage(BuildContext context, Widget widget){
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => widget));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
     });
   }
 
@@ -55,7 +56,7 @@ class WellcomePage extends StatelessWidget{
       padding: const EdgeInsets.all(10),
 
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
 
         children: [
@@ -63,27 +64,50 @@ class WellcomePage extends StatelessWidget{
           Logo(),
 
           // Button
-          GestureDetector(
-            onTap: () async{
-              bool isCheck = await _checkData(context);
-              if(isCheck){goPage(context, BottomMenu());}
-              else{goPage(context, SignIn());}
-            },
-            child: SizedBox(
-              height: getMainHeight(context)/3,
-              width: getMainWidth(context),
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: ButtonCustom(currentContext: context, text: 'Sign In',)
+          Column(
+              children: [
+                GestureDetector(
+                  onTap: () async{
+                    bool isCheck = await _checkData(context);
+                    if(isCheck){goPage(context, const BottomMenu());}
+                    else{goPage(context, const SignIn());}
+                  },
+                  child: SizedBox(
+                    height: 100,
+                    width: getMainWidth(context),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: ButtonCustom(currentContext: context, text: "Sign In",)
+                        ),
+                      ],
+                    )
                   ),
-                ],
-              )
-            ),
-          )
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                  },
+                  child: SizedBox(
+                    height: 100,
+                    width: getMainWidth(context),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: ButtonCustom(currentContext: context, text: "Sign Up",)
+                        ),
+                      ],
+                    )
+                  ),
+                )
+              ],
+            )
         ],
       ),
     );

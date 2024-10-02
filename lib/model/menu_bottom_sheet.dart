@@ -14,7 +14,7 @@ Future<void> _handleDeleteTask(BuildContext context, String taskId) async{
     showAlert(context, QuickAlertType.loading, "Please wait a few seconds!");
     bool isDeleted = await plansApi.removeTask(taskId);
     if(isDeleted){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>BottomMenu()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const BottomMenu()));
     }
     else{
       Navigator.pop(context);

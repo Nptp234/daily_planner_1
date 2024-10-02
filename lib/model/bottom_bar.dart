@@ -2,7 +2,7 @@
 import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
-import 'package:daily_planner_1/model/notification_logic.dart';
+import 'package:daily_planner_1/controller/notification_logic.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/ui/calendar_view.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
@@ -28,7 +28,7 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
 
   Future<void> _refreshData() async {
     // Simulate refreshing data
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     List<Task> lst = await PlansApi().getList();
     setState(() {
       ListTask().setTasks(lst);
@@ -76,7 +76,7 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
                     Positioned(
                       bottom: 3,
                       right: 3,
-                      child: Text("${value.getList().length}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),)
+                      child: Text("${value.getList().length}", style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),)
                     )
                   ],
                 ),

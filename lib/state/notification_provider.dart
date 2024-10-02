@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class NotificationProvider with ChangeNotifier{
 
-  List<NotificationModel> _lst = [];
+  final List<NotificationModel> _lst = [];
 
   void addList(NotificationModel notify){
     bool exists = _lst.any((noti) => noti.task == notify.task);

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AddTask extends StatefulWidget{
-  AddTask({super.key});
+  const AddTask({super.key});
 
   @override
   State<AddTask> createState() => _AddTask();

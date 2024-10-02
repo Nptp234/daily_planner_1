@@ -5,7 +5,6 @@ import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_form.dart';
-import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:quickalert/models/quickalert_type.dart';

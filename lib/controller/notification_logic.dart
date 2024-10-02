@@ -35,14 +35,14 @@ class NotificationCenter{
 
   Future<void> initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings = InitializationSettings(
+    final InitializationSettings initializationSettings = const InitializationSettings(
       android: initializationSettingsAndroid,
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void startTime(){
-    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) async{
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async{
       await checkTasksAndNotify();
     });
   }

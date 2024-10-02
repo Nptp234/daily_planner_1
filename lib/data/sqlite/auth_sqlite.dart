@@ -23,9 +23,10 @@ class UserSqlite{
     log('deleted $data');
   }
 
-  updateUser(String username, String password) async{
+  Future<bool> updateUser(String username, String password) async{
     await deleteUser();
-    await addUser(username, password);
+    bool isAdd = await addUser(username, password);
+    return isAdd;
   }
 
   Future<Map<String, dynamic>> getUser() async{
