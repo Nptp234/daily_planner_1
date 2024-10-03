@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 
 class Task{
-  String? id, title, dateCreated, dateStart, content, startTime, endTime, method, location, host, note, state;
+  String? id, title, dateCreated, dateStart, content, startTime, endTime, method, location, host, note, state, userCreated;
   bool isNotified = false;
-  Task({this.id, this.dateCreated, this.content, this.startTime, this.endTime, this.method, this.host, this.note, this.state, this.title, this.location, this.dateStart, this.isNotified = false});
+  Task({
+    this.id, 
+    this.dateCreated, 
+    this.content, 
+    this.startTime, 
+    this.endTime, 
+    this.method, 
+    this.host, 
+    this.note, 
+    this.state, 
+    this.title, 
+    this.location, 
+    this.dateStart, 
+    this.userCreated,
+    this.isNotified = false
+  });
 
   Task.fromJson(Map<dynamic, dynamic> e){
     id = e["ID"];
@@ -34,18 +49,18 @@ class Task{
   int get hashCode => id.hashCode;
 }
 
-class ListTask with ChangeNotifier{
-  //singleton
-  ListTask._privateContructor();
-  static final ListTask _instance = ListTask._privateContructor();
-  factory ListTask(){
-    return _instance;
-  }
-  //
+// class ListTask with ChangeNotifier{
+//   //singleton
+//   ListTask._privateContructor();
+//   static final ListTask _instance = ListTask._privateContructor();
+//   factory ListTask(){
+//     return _instance;
+//   }
+//   //
 
-  List<Task> tasks = [];
+//   List<Task> tasks = [];
 
-  void setTasks(List<Task> lst){
-    tasks=lst; 
-  }
-}
+//   void setTasks(List<Task> lst){
+//     tasks=lst; 
+//   }
+// }

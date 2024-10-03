@@ -5,6 +5,7 @@ import 'package:daily_planner_1/data/model/notification.dart';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
+import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,8 @@ class NotificationCenter{
   DateTime dateNow = DateTime.now();
   PlansApi plansApi = PlansApi();
   late NotificationProvider notificationProvider;
-  final listTask = ListTask();
+  late TaskProvider taskProvider;
+  // final listTask = ListTask();
 
   final tz.TZDateTime now = tz.TZDateTime.now(tz.getLocation('Asia/Ho_Chi_Minh'));
 
@@ -42,7 +44,7 @@ class NotificationCenter{
   }
 
   void startTime(){
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async{
+    timer = Timer.periodic(const Duration(seconds: 15), (Timer timer) async{
       await checkTasksAndNotify();
     });
   }
@@ -53,7 +55,7 @@ class NotificationCenter{
 
   void setTasks(){
     _tasks = [];
-    _tasks = listTask.tasks;
+    _tasks = taskProvider.tasks;
   }
 
   void addListNotifyProvider(Task task){

@@ -1,19 +1,14 @@
 import 'package:daily_planner_1/data/api/plans_api.dart';
 import 'package:daily_planner_1/data/model/task.dart';
-import 'package:daily_planner_1/data/model/task_statistic.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/menu_bottom_sheet.dart';
-import 'package:daily_planner_1/controller/notification_logic.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
 import 'package:daily_planner_1/model/task_statistic.dart';
-import 'package:daily_planner_1/model/value_statistic.dart';
-import 'package:daily_planner_1/state/reorder_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:daily_planner_1/ui/task/add_task.dart';
 import 'package:daily_planner_1/ui/task/detail_task.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ListTaskPage extends StatefulWidget{
@@ -28,93 +23,23 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
   late TabController tabController;
   
   PlansApi plansApi = PlansApi();
-  final listTask = ListTask();
 
   bool isLoad = false;
-
   int indexTab = 0;
 
-  // Future<List<Task>> getList() async{
-  //   try{
-  //     List<Task> lst = await plansApi.getList();
-  //     await chechForUpdateStatus(lst);
-  //     listTask.setTasks(lst);
-  //     return listTask.tasks;
-  //   }
-  //   catch(e){
-  //     rethrow;
-  //   }
-  // }
-  Future<void> getList(BuildContext context) async {
-    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
-    await taskProvider.fetchTasks(plansApi);
-  }
-
-  // Future<void> chechForUpdateStatus(List<Task> lst) async{
-  //   try{ 
-  //     for(var task in lst){
-  //       if(checkForEndTime(task.endTime!, task.dateStart!)){
-  //         if(task.state!="Done"){
-  //           await plansApi.updateTaskState(task, "Ended");
-  //         }
-  //       }
-  //     }
-  //     NotificationCenter().setTasks();
-  //   }
-  //   catch(e){
-  //     rethrow;
-  //   }
-  // }
-  int refreshNumber = 9;
   Future<void> _refreshData(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 2));
-    await getList(context);
-    setState(() {});
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    await taskProvider.fetchTasks();
   }
-
-  // bool checkForEndTime(String endTime, String dateStart){
-  //   TimeOfDay now = TimeOfDay.now();
-  //   DateTime dateNow = DateTime.now();
-  //   DateFormat format = DateFormat("dd/MM/yyyy");
-  //   DateTime newDate = format.parse(dateStart);
-
-  //   // String jm = endTime.split(" ")[1];
-  //   List<String> times = endTime.split(" ")[0].split(":");
-  //   TimeOfDay newEnd = parseTimeOfDay(endTime);
-  //   if(newDate.year<=dateNow.year && newDate.month<=dateNow.month && newDate.day<dateNow.day){
-  //     return true;
-  //   }
-  //   if(newEnd.hour<now.hour){return true;}
-  //   return newEnd.hour==now.hour && newEnd.minute<now.minute;
-  // }
-
-  // TaskStatisticModel setTaskStatistic(Color color, double value, String title, String taskState){
-  //   return TaskStatisticModel(color: color, value: value, title: title, taskState: taskState);
-  // }
-
-  // void setStatisticList(StatisticProvider provider){
-  //   List<TaskStatisticModel> lst = [];
-  //   setValueList(listTask.tasks);
-    
-  //   Set<String> uniqueStates = <String>{};
-  //   for (var task in listTask.tasks) {
-  //     uniqueStates.add(task.state!);
-  //   }
-
-  //   for(var state in uniqueStates){
-  //     double value = calculatePercentage(state);
-  //     lst.add(setTaskStatistic(colorState(state), value, "$value%", state));
-  //   }
-  //   provider.setList(lst);
-  // }
-
 
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getList(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async{
+    //   await getList(context);
+    //   setState(() {});
+    // });
     super.initState();
   }
 
@@ -257,21 +182,16 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
               } else if (taskProvider.tasks.isEmpty) {
                 return const Center(child: Text("No tasks available!"));
               } else {
-                return Consumer<ReorderProvider>(
-                  builder: (context, value, child) {
-                    value.setTasks(taskProvider.tasks);
-                    taskProvider.setStatisticList(statistic);
-                    return ReorderableListView.builder(
-                      itemCount: taskProvider.tasks.length,
-                      onReorder: value.reorderTasks,
-                      itemBuilder: (context, index) {
-                        Task task = taskProvider.tasks[index];
-                        return TaskItem(
-                          key: ValueKey(task.id),
-                          task: task,
-                          colorState: colorState(task.state!),
-                        );
-                      },
+                taskProvider.setStatisticList(statistic);
+                return ReorderableListView.builder(
+                  itemCount: taskProvider.tasks.length,
+                  onReorder: taskProvider.reorderTasks,
+                  itemBuilder: (context, index) {
+                    Task task = taskProvider.tasks[index];
+                    return TaskItem(
+                      key: ValueKey(task.id),
+                      task: task,
+                      colorState: colorState(task.state!),
                     );
                   },
                 );

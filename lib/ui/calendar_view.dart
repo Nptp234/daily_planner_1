@@ -3,13 +3,16 @@ import 'dart:developer';
 import 'package:daily_planner_1/data/model/task.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/statistic_color.dart';
+import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:daily_planner_1/ui/list_task.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarViewPage extends StatefulWidget{
-  const CalendarViewPage({super.key});
+  CalendarViewPage({super.key, required this.taskProvider});
+
+  TaskProvider taskProvider;
 
   @override
   State<CalendarViewPage> createState() => _CalendarViewPage();
@@ -25,12 +28,13 @@ class _CalendarViewPage extends State<CalendarViewPage>{
   late int year, month, day;
   late DateTime _firstDay, _lastDay;
 
-  final listTask = ListTask();
 
   List<Task> _getTask(DateTime day){
     String formattedDate = formatDate("$day");
     log(formattedDate);
-    if(listTask.tasks.isNotEmpty){return listTask.tasks.where((task)=>task.dateStart==formattedDate).toList();}
+    if(widget.taskProvider.tasks.isNotEmpty){
+      return widget.taskProvider.tasks.where((task)=>task.dateStart==formattedDate).toList();
+    }
     else{return [];}
   }
 

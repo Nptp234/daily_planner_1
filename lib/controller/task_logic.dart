@@ -10,21 +10,18 @@ import 'package:intl/intl.dart';
 class TaskCenter{
 
   PlansApi plansApi = PlansApi();
-  ListTask listTask = ListTask();
-  NotificationCenter notificationCenter = NotificationCenter();
+  // NotificationCenter notificationCenter = NotificationCenter();
 
-  List<Task> _task = [];
-  UnmodifiableListView<Task> get tasks => UnmodifiableListView(_task);
+  List<Task> tasks = [];
 
   Future<void> getTasks() async{
-    _task = [];
+    tasks = [];
     try{
-      _task = await plansApi.getList();
-      if(_task.isNotEmpty){
-        await updateTaskStates();
-        listTask.setTasks(_task);
-        notificationCenter.setTasks();
-      }
+      tasks = await plansApi.getList();
+      // if(_task.isNotEmpty){
+      //   await updateTaskStates();
+      //   notificationCenter.setTasks();
+      // }
     }
     catch(e){
       rethrow;

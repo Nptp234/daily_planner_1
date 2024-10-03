@@ -6,9 +6,11 @@ import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/logo.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/main_button.dart';
+import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:daily_planner_1/ui/auth/sign_in.dart';
 import 'package:daily_planner_1/ui/auth/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
 class WellcomePage extends StatelessWidget{
@@ -18,16 +20,16 @@ class WellcomePage extends StatelessWidget{
   final currentUser = CurrentUser();
   final userSqlite = UserSqlite();
   
-  Future<bool> _checkData(BuildContext context) async{
+  Future<bool> _checkData(BuildContext context, TaskProvider taskProvider) async{
     showAlert(context, QuickAlertType.loading, "Loading local user data...");
     try{
       Map<String, dynamic> lst = await userSqlite.getUser();
       if(lst.isEmpty){
-        //no local user
         return false;
       }
       else{
         final bool sign = await userApi.checkUser(lst['email'], lst['password']);
+        await taskProvider.fetchTasks();
         return sign;
       }
     }
@@ -64,50 +66,54 @@ class WellcomePage extends StatelessWidget{
           Logo(),
 
           // Button
-          Column(
-              children: [
-                GestureDetector(
-                  onTap: () async{
-                    bool isCheck = await _checkData(context);
-                    if(isCheck){goPage(context, const BottomMenu());}
-                    else{goPage(context, const SignIn());}
-                  },
-                  child: SizedBox(
-                    height: 100,
-                    width: getMainWidth(context),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: ButtonCustom(currentContext: context, text: "Sign In",)
-                        ),
-                      ],
-                    )
+          Consumer<TaskProvider>(
+            builder: (context, value, child) {
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async{
+                      bool isCheck = await _checkData(context, value);
+                      if(isCheck){goPage(context, const BottomMenu());}
+                      else{goPage(context, const SignIn());}
+                    },
+                    child: SizedBox(
+                      height: 100,
+                      width: getMainWidth(context),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: ButtonCustom(currentContext: context, text: "Sign In",)
+                          ),
+                        ],
+                      )
+                    ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
-                  },
-                  child: SizedBox(
-                    height: 100,
-                    width: getMainWidth(context),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: ButtonCustom(currentContext: context, text: "Sign Up",)
-                        ),
-                      ],
-                    )
-                  ),
-                )
-              ],
-            )
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                    },
+                    child: SizedBox(
+                      height: 100,
+                      width: getMainWidth(context),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: ButtonCustom(currentContext: context, text: "Sign Up",)
+                          ),
+                        ],
+                      )
+                    ),
+                  )
+                ],
+              );
+            },
+          )
         ],
       ),
     );

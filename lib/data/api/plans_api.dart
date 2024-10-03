@@ -34,7 +34,10 @@ class PlansApi{
 
   Future<Map<dynamic, dynamic>> _fetchData() async{
     try{
-      final res = await http.get(Uri.parse(baseUrl!), headers: {'Authorization':'Bearer $key'});
+      final res = await http.get(
+        Uri.parse('$baseUrl?filterByFormula={UserCreated}="${currentUser.username!}"'), 
+        headers: {'Authorization':'Bearer $key'}
+      );
       if(res.statusCode==200){
         return jsonDecode(res.body);
       }else{
@@ -53,9 +56,7 @@ class PlansApi{
       var records = res["records"];
       for(var record in records){
         var field = record["fields"];
-        if(field["UserCreated"]==currentUser.username){
-          lst.add(Task.fromJson(field));
-        }
+        lst.add(Task.fromJson(field));
       }
       return lst;
     }
