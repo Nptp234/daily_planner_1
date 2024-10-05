@@ -88,6 +88,33 @@ class AuthCenter{
     }
   } 
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<void> handleSignInGoogle(BuildContext context) async{
+    showAlert(context, QuickAlertType.loading, "Authenticating...");
+
+    try{
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken
+      );
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+
+      Navigator.pop(context);
+      UserThis user = UserThis(email: userCredential.user!.email, username: userCredential.user!.displayName, pass: "123");
+      currentUser.setCurrent(user);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
+    }
+    catch(e){
+      Navigator.of(context).pop();
+      showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
+    }
+  } 
+
   void handleLogOut(BuildContext context){
     currentUser.setCurrent(User());
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>WellcomePage()), (Route<dynamic> route) => false);

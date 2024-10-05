@@ -1,3 +1,4 @@
+import 'package:daily_planner_1/controller/auth_logic.dart';
 import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
@@ -34,7 +35,50 @@ class WellcomePage extends StatelessWidget{
       }
     }
     catch(e){
-      rethrow;
+      return false;
+    }
+  }
+
+  Future<bool> _checkDataSSO(BuildContext context, TaskProvider taskProvider) async{
+    showAlert(context, QuickAlertType.loading, "Loading data...");
+    try{
+      final body = {
+        "records":[
+                {
+                    "fields":{
+                          "Email": currentUser.email,
+                          "Pass": currentUser.pass,
+                          "Username": currentUser.username
+                      }
+                }
+            ]
+      };
+      bool checkApi = await userApi.checkUser(currentUser.email!, currentUser.pass!);
+      if(!checkApi){
+        bool addApi = await userApi.addUser(body);
+        if(addApi){
+          bool updateSqlite = await userSqlite.updateUser(currentUser.username!, currentUser.pass!);
+          Navigator.pop(context);
+          showAlert(context, QuickAlertType.loading, "Loading your task...");
+          await taskProvider.fetchTasks();
+          return updateSqlite;
+        }
+        else{
+          Navigator.pop(context);
+          showAlert(context, QuickAlertType.error, "Error when try to create you account!");
+          return false;
+        }
+      }
+      else{
+        bool updateSqlite = await userSqlite.updateUser(currentUser.username!, currentUser.pass!);
+        Navigator.pop(context);
+        showAlert(context, QuickAlertType.loading, "Loading your task...");
+        await taskProvider.fetchTasks();
+        return updateSqlite;
+      }
+    }
+    catch(e){
+      return false;
     }
   }
 
@@ -109,12 +153,64 @@ class WellcomePage extends StatelessWidget{
                         ],
                       )
                     ),
+                  ),
+                  const SizedBox(height: 20,),
+
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Divider(thickness: 1, height: 1, color: Colors.grey,),
+                      Container(color: Colors.white, child: const Text("or", style: TextStyle(color: Colors.grey, fontSize: 20),),)
+                    ],
+                  ),
+                  const SizedBox(height: 20,),
+
+                  _buttonSSO(
+                    context, 
+                    'assets/logo_google_g_icon.png', 
+                    'Continue with Google', 
+                    const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold), 
+                    Colors.white,
+                    action: () async{
+                      await AuthCenter().handleSignInGoogle(context);
+                    },
                   )
                 ],
               );
             },
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buttonSSO(BuildContext context, String image, String text, TextStyle textStyle, Color backgroundColor, {void Function()? action}){
+    return GestureDetector(
+      onTap: action,
+      child: Container(
+        width: getMainWidth(context),
+        height: 60,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: backgroundColor, 
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey, width: 1)
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 0,
+              child: SizedBox(width: 40, child: Image.asset(image, fit: BoxFit.cover,),),
+            ),
+            const SizedBox(width: 20,),
+            Expanded(
+              flex: 1,
+              child: Text(text, style: textStyle,)
+            )
+          ],
+        ),
       ),
     );
   }
