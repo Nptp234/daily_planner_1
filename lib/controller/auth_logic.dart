@@ -109,7 +109,6 @@ class AuthCenter{
       Navigator.pop(context);
       UserThis user = UserThis(email: userCredential.user!.email, username: userCredential.user!.displayName, pass: "123");
       currentUser.setCurrent(user);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
     }
     catch(e){
       Navigator.of(context).pop();

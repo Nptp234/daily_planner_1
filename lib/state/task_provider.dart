@@ -45,9 +45,17 @@ class TaskProvider with ChangeNotifier {
 
   void updateTask(Task task){
     int index = tasks.indexOf(task);
-    if (index != -1) {
-      tasks.removeAt(index);
-      tasks[index] = task;
+    if(tasks.length>1){
+      if (index != -1) {
+        tasks.removeAt(index);
+        tasks[index] = task;
+      }
+    }
+    else if(tasks.length==1){
+      tasks[0] = task;
+    }
+    else{
+      addTask(task);
     }
     notifyListeners();
   }

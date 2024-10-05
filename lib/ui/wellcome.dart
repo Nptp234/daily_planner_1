@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:daily_planner_1/controller/auth_logic.dart';
 import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
@@ -35,7 +37,50 @@ class WellcomePage extends StatelessWidget{
       }
     }
     catch(e){
-      rethrow;
+      return false;
+    }
+  }
+
+  Future<bool> _checkDataSSO(BuildContext context, TaskProvider taskProvider) async{
+    showAlert(context, QuickAlertType.loading, "Loading data...");
+    try{
+      final body = {
+        "records":[
+                {
+                    "fields":{
+                          "Email": currentUser.email,
+                          "Pass": currentUser.pass,
+                          "Username": currentUser.username
+                      }
+                }
+            ]
+      };
+      bool checkApi = await userApi.checkUser(currentUser.email!, currentUser.pass!);
+      if(!checkApi){
+        bool addApi = await userApi.addUser(body);
+        if(addApi){
+          bool updateSqlite = await userSqlite.updateUser(currentUser.username!, currentUser.pass!);
+          Navigator.pop(context);
+          showAlert(context, QuickAlertType.loading, "Loading your task...");
+          await taskProvider.fetchTasks();
+          return updateSqlite;
+        }
+        else{
+          Navigator.pop(context);
+          showAlert(context, QuickAlertType.error, "Error when try to create you account!");
+          return false;
+        }
+      }
+      else{
+        bool updateSqlite = await userSqlite.updateUser(currentUser.username!, currentUser.pass!);
+        Navigator.pop(context);
+        showAlert(context, QuickAlertType.loading, "Loading your task...");
+        await taskProvider.fetchTasks();
+        return updateSqlite;
+      }
+    }
+    catch(e){
+      return false;
     }
   }
 
@@ -131,6 +176,10 @@ class WellcomePage extends StatelessWidget{
                     Colors.white,
                     action: () async{
                       await AuthCenter().handleSignInGoogle(context);
+                      bool isCheck = await _checkDataSSO(context, value);
+                      if(isCheck){
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const BottomMenu()));
+                      }
                     },
                   )
                 ],
@@ -165,7 +214,7 @@ class WellcomePage extends StatelessWidget{
             const SizedBox(width: 20,),
             Expanded(
               flex: 1,
-              child: Text(text, style: textStyle,)
+              child: SizedBox(width: double.infinity, child: Text(text, style: textStyle, textAlign: TextAlign.center,),)
             )
           ],
         ),
