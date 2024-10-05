@@ -55,7 +55,7 @@ class UserApi{
         var records = body["records"];
         if(records.isNotEmpty){
           var field = records[0]["fields"];
-          currentUser.setCurrent(User(username: field["Username"], email: field["Email"], pass: field["Pass"]));
+          currentUser.setCurrent(UserThis(username: field["Username"], email: field["Email"], pass: field["Pass"]));
         }
         return records.isNotEmpty;
       }else{return false;}

@@ -81,9 +81,9 @@ class _BottomMenu extends State<BottomMenu> with TickerProviderStateMixin{
           return IndexedStack(
             index: _motionTabBarController!.index,
             children: [
-              ListTaskPage(),
+              const ListTaskPage(),
               CalendarViewPage(taskProvider: value,),
-              SettingViewPage(),
+              const SettingViewPage(),
             ],
           );
         },

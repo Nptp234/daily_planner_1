@@ -1,14 +1,9 @@
 // ignore: must_be_immutable
 import 'package:daily_planner_1/controller/auth_logic.dart';
-import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
-import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
-import 'package:daily_planner_1/model/alert.dart';
-import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/model/const.dart';
 import 'package:daily_planner_1/model/main_button.dart';
 import 'package:flutter/material.dart';
-import 'package:quickalert/quickalert.dart';
 
 class SignIn extends StatefulWidget{
   const SignIn({super.key});

@@ -71,7 +71,7 @@ class _ListTaskPage extends State<ListTaskPage> with SingleTickerProviderStateMi
                 bottom: 10,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddTask()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddTask()));
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),

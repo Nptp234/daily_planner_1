@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "293947040466",
+    "project_id": "planner-flutter-6cb45",
+    "storage_bucket": "planner-flutter-6cb45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293947040466:android:f2c4595cfad9a63403430b",
+        "android_client_info": {
+          "package_name": "com.example.daily_planner_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkQv0uiLjQ_9Z932WMbyOLzi7mzwPefws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

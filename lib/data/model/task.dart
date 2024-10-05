@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 class Task{
   String? id, title, dateCreated, dateStart, content, startTime, endTime, method, location, host, note, state, userCreated;

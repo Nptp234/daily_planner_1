@@ -40,10 +40,10 @@ class _SignUp extends State<SignUp>{
     String lastPart = emailPart[1];
 
     bool _checkSpecialChar = checkSpecialChar(firstPart);
-    bool _checkEmailAddress = lastPart.contains("gmail.com");
+    bool checkEmailAddress = lastPart.contains("gmail.com");
 
     if(_checkSpecialChar){return "We don't accept special char!";}
-    if(!_checkEmailAddress){return "We don't accept this address!";}
+    if(!checkEmailAddress){return "We don't accept this address!";}
 
     return null;
   }
@@ -66,7 +66,8 @@ class _SignUp extends State<SignUp>{
 
     if(value.length<8){return "Password too short!";}
     if(value.contains(" ")){return "We don't accept space in your password!";}
-    if(!checkSpecialChar(value)){return "Your pass too weak, try add some special char!";}    
+    if(!checkSpecialChar(value)){return "Your pass too weak, try add some special char!";}
+    return null;    
   }
 
   @override
@@ -102,7 +103,7 @@ class _SignUp extends State<SignUp>{
             GestureDetector(
               onTap: () async{
                 if(formKey.currentState?.validate()??false){
-                  authCenter.handleSignUp(context, User(email: emailControl.text, pass: passwordControl.text, username: usernameControl.text));
+                  authCenter.handleSignUp(context, UserThis(email: emailControl.text, pass: passwordControl.text, username: usernameControl.text));
                 }
                 
               },
