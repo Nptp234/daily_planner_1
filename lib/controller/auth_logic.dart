@@ -7,7 +7,9 @@ import 'package:daily_planner_1/model/alert.dart';
 import 'package:daily_planner_1/model/bottom_bar.dart';
 import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:daily_planner_1/ui/wellcome.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 
 class AuthCenter{
@@ -47,7 +49,7 @@ class AuthCenter{
     }
   }
 
-  Future<void> handleSignUp(BuildContext context, User user) async{
+  Future<void> handleSignUp(BuildContext context, UserThis user) async{
     showAlert(context, QuickAlertType.loading, "Authenticating...");
 
     try{
@@ -70,7 +72,7 @@ class AuthCenter{
         bool isAdd = await userApi.addUser(body);
         if(isAdd){
           _addSqlite(context, user.email!, user.pass!);
-          currentUser.setCurrent(User(username: user.username, email: user.email, pass: user.pass));
+          currentUser.setCurrent(UserThis(username: user.username, email: user.email, pass: user.pass));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
         }
         else{
@@ -88,8 +90,35 @@ class AuthCenter{
     }
   } 
 
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<void> handleSignInGoogle(BuildContext context) async{
+    showAlert(context, QuickAlertType.loading, "Authenticating...");
+
+    try{
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken
+      );
+      UserCredential userCredential = await _firebaseAuth.signInWithCredential(authCredential);
+
+      Navigator.pop(context);
+      UserThis user = UserThis(email: userCredential.user!.email, username: userCredential.user!.displayName, pass: "123");
+      currentUser.setCurrent(user);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomMenu()),);
+    }
+    catch(e){
+      Navigator.of(context).pop();
+      showAlert(context, QuickAlertType.error, "An error occurred. Please try again.");
+    }
+  }
+
   void handleLogOut(BuildContext context){
-    currentUser.setCurrent(User());
+    currentUser.setCurrent(UserThis());
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>WellcomePage()), (Route<dynamic> route) => false);
   }
 }

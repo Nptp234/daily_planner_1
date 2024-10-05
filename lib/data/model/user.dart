@@ -1,15 +1,15 @@
-class User{
+class UserThis{
   String? username, email, pass;
-  User({this.username, this.email, this.pass});
+  UserThis({this.username, this.email, this.pass});
 
-  User.fromJson(Map<dynamic, dynamic> e){
+  UserThis.fromJson(Map<dynamic, dynamic> e){
     username = e["Username"];
     email = e["Email"];
     pass = e["Pass"];
   }
 }
 
-class CurrentUser extends User{
+class CurrentUser extends UserThis{
   //singleton
   CurrentUser._privateContructor();
   static final CurrentUser _instance = CurrentUser._privateContructor();
@@ -18,7 +18,7 @@ class CurrentUser extends User{
   }
   //
   
-  void setCurrent(User user){
+  void setCurrent(UserThis user){
     username = user.username;
     email = user.email;
     pass = user.pass;

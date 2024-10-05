@@ -1,3 +1,4 @@
+import 'package:daily_planner_1/controller/auth_logic.dart';
 import 'package:daily_planner_1/data/api/user_api.dart';
 import 'package:daily_planner_1/data/model/user.dart';
 import 'package:daily_planner_1/data/sqlite/auth_sqlite.dart';
@@ -91,9 +92,10 @@ class WellcomePage extends StatelessWidget{
                       )
                     ),
                   ),
+
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUp()));
                     },
                     child: SizedBox(
                       height: 100,
@@ -109,12 +111,64 @@ class WellcomePage extends StatelessWidget{
                         ],
                       )
                     ),
+                  ),
+                  const SizedBox(height: 20,),
+
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Divider(thickness: 1, height: 1, color: Colors.grey,),
+                      Container(color: Colors.white, child: const Text("or", style: TextStyle(color: Colors.grey, fontSize: 20),),)
+                    ],
+                  ),
+                  const SizedBox(height: 20,),
+
+                  _buttonSSO(
+                    context, 
+                    'assets/logo_google_g_icon.png', 
+                    'Continue with Google', 
+                    const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold), 
+                    Colors.white,
+                    action: () async{
+                      await AuthCenter().handleSignInGoogle(context);
+                    },
                   )
                 ],
               );
             },
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buttonSSO(BuildContext context, String image, String text, TextStyle textStyle, Color backgroundColor, {void Function()? action}){
+    return GestureDetector(
+      onTap: action,
+      child: Container(
+        width: getMainWidth(context),
+        height: 60,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: backgroundColor, 
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey, width: 1)
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 0,
+              child: SizedBox(width: 40, child: Image.asset(image, fit: BoxFit.cover,),),
+            ),
+            const SizedBox(width: 20,),
+            Expanded(
+              flex: 1,
+              child: Text(text, style: textStyle,)
+            )
+          ],
+        ),
       ),
     );
   }

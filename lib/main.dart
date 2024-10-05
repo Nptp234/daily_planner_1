@@ -1,10 +1,12 @@
 
 import 'package:daily_planner_1/controller/notification_logic.dart';
+import 'package:daily_planner_1/firebase_options.dart';
 import 'package:daily_planner_1/state/notification_provider.dart';
 import 'package:daily_planner_1/state/reorder_provider.dart';
 import 'package:daily_planner_1/state/statistic_provider.dart';
 import 'package:daily_planner_1/state/task_provider.dart';
 import 'package:daily_planner_1/ui/wellcome.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,11 @@ void main() async{
   tz.initializeTimeZones();
   await dotenv.load(fileName: "assets/.env");
   await notificationCenter.initializeNotifications();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   runApp(const MainApp());
 }
 
